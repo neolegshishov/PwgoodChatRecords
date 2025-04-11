@@ -152,7 +152,7 @@
   <script>
 
     async function get_livestreams_data() {
-      const response_list_video = await fetch('/livestreams.json', {});
+      const response_list_video = await fetch('livestreams.json', {});
       const list_videos = await response_list_video.json();
       list_videos.forEach((video_data) => {
         let li = document.createElement('li');
@@ -163,7 +163,7 @@
       }
 
     async function get_highlights_data() {
-    const response_list_video = await fetch('/highlights.json', {});
+    const response_list_video = await fetch('highlights.json', {});
     const list_videos = await response_list_video.json();
     list_videos.forEach((video_data) => {
       let li = document.createElement('li');
@@ -207,7 +207,7 @@
     async function loadChat(chatSrc) {
       chatContent.innerHTML = "<p>Загрузка чата...</p>";
       try {
-        const response = await fetch('/' + chatSrc, {
+        const response = await fetch(chatSrc, {
         });
         const chatText = await response.text();
         const chatLines = chatText.split("\n");
