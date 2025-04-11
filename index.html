@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html lang="ru">
 <head>
+  <link rel="shortcut icon" href="https://goood.pw/assets/top-hat.png">
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>PwGood Архив</title>
@@ -203,42 +204,50 @@
       chatContent.scrollTop = chatContent.scrollHeight;
     }
 
+    function parseRelativeTime(relativeTime) {
+      const parts = relativeTime.split(":").map(Number); // Разбиваем строку времени
+      return parts.reduce((acc, part) => acc * 60 + part, 0); // Конвертируем [часы, минуты, секунды] в секунды
+    }
+
+
 
     async function loadChat(chatSrc) {
       chatContent.innerHTML = "<p>Загрузка чата...</p>";
+      clearInterval(chatUpdateInterval); // Очищаем интервал, если был установлен
+
       try {
-        const response = await fetch(chatSrc, {
-        });
+        const response = await fetch(chatSrc);
         const chatText = await response.text();
         const chatLines = chatText.split("\n");
 
+        // Обрабатываем сообщения с относительным временем
         chatMessages = chatLines.map((line) => {
-          const match = line.match(/\[(.+?) UTC\] (.+?): (.+)/);
+          const match = line.match(/\[([0-9:]+)\] (.+?): (.+)/); // Формат [0:00:00] User: peepoWeirdLeaveIntoGalaxy
           if (match) {
             return {
-              time: new Date(match[1]).getTime() / 1000,
-              user: match[2],
-              message: match[3],
+              time: parseRelativeTime(match[1]), // Переводим относительное время в секунды
+              rawTime: match[1], // Сохраняем строку времени для отображения
+              user: match[2], // Имя пользователя
+              message: match[3], // Текст сообщения
             };
           }
           return null;
         }).filter(Boolean);
 
+        // Если сообщения есть, корректируем начальное время
         if (chatMessages.length > 0) {
           startTime = chatMessages[0].time;
-          chatMessages.forEach((msg) => {
-            msg.time -= startTime;
-          });
+        } else {
+          chatMessages = [{ time: 0.0, rawTime: "0:00:00", user: "Система", message: "Не удалось загрузить чат!  flushE " }];
         }
-        else {
-          chatMessages = [{time: 0.0, user: 'Система', message: 'Не удалось загрузить чат!  flushE '}]
-        }
-        chatContent.innerHTML = "";
-        scrollToBottom(); // Прокручиваем вниз
+
+        chatContent.innerHTML = ""; // Очищаем содержимое чата
+        scrollToBottom(); // Прокручиваем вниз при первоначальной загрузке
       } catch (error) {
-        console.error(error);
+        console.error("Ошибка загрузки чата:", error);
       }
     }
+
 
     const emoteCache = {}; // Кеш для эмоций
 
