@@ -310,6 +310,7 @@
             (child) => !visibleMessages.find((msg) => msg.time.toString() === child.dataset.msgId)
           );
           extraMessages.forEach((msg) => chatContent.removeChild(msg));
+          scrollToBottom();
         }, 100);
       } else if (event.data === YT.PlayerState.PAUSED) {
         clearInterval(chatUpdateInterval);
