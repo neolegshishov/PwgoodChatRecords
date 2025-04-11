@@ -1491,7 +1491,6 @@
 [2020-04-20 11:15:09 UTC] StreamElements: TwaT cvHazmat
 [2020-04-20 11:15:09 UTC] lIllIIllIllIIlIllIIllIIll: Жаль нет штуки, которая будет отзеркаливать карты peepoDown
 [2020-04-20 11:15:09 UTC] lIllIIllIllIIlIllIIllIIll: Ванильной штуки
-[2020-04-20 11:15:09 UTC] francliz: Klass = NeKlass
 [2020-04-20 11:15:09 UTC] pOOSHKA: просто строишь отзеркаленный рисунок отдельно 4HEader
 [2020-04-20 11:15:10 UTC] lIllIIllIllIIlIllIIllIIll: 5Klass
 [2020-04-20 11:15:10 UTC] vassimall: @FireCub_ peepoDown
