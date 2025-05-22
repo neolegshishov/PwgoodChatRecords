@@ -4,6 +4,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Pwgood Records - Поиск</title>
+  <link rel="icon" type="image/png" href="https://goood.pw/assets/top-hat.png">
   <style>
     /* Общий сброс и базовые стили */
     * { margin: 0; padding: 0; box-sizing: border-box; }
@@ -91,6 +92,22 @@
       font-size: 1rem;
       cursor: pointer;
     }
+    /* Прогресс-бар */
+    .progress-container {
+      width: 100%;
+      background: #303030;
+      border-radius: 4px;
+      margin: 10px auto 20px auto;
+      height: 20px;
+      overflow: hidden;
+      display: none; /* по умолчанию скрыт */
+    }
+    .progress-bar {
+      height: 100%;
+      width: 0%;
+      background: #9147ff;
+      transition: width 0.3s ease;
+    }
     /* Сетка с результатами */
     .results {
       display: grid;
@@ -121,20 +138,27 @@
       }
     }
   </style>
-    <!-- Yandex.Metrika counter -->
+  <!-- Yandex.Metrika counter -->
   <script type="text/javascript">
-    (function(m,e,t,r,i,k,a){m[i]=m[i]||function(){(m[i].a=m[i].a||[]).push(arguments)};
-    m[i].l=1*new Date();
-    for(var j=0;j<document.scripts.length;j++){
-      if(document.scripts[j].src===r){return;}
-    }
-    k=e.createElement(t),a=e.getElementsByTagName(t)[0],
-    k.async=1,k.src=r,a.parentNode.insertBefore(k,a)})
-    (window, document, "script", "https://mc.yandex.ru/metrika/tag.js", "ym");
-    ym(100982365, "init", { clickmap:true, trackLinks:true, accurateTrackBounce:true, webvisor:true });
+       (function(m,e,t,r,i,k,a){m[i]=m[i]||function(){(m[i].a=m[i].a||[]).push(arguments)};
+       m[i].l=1*new Date();
+       for (var j = 0; j < document.scripts.length; j++) {
+         if (document.scripts[j].src === r) { return; }
+       }
+       k=e.createElement(t),a=e.getElementsByTagName(t)[0],k.async=1,k.src=r,a.parentNode.insertBefore(k,a)})
+       (window, document, "script", "https://mc.yandex.ru/metrika/tag.js", "ym");
+
+       ym(100982365, "init", {
+            clickmap:true,
+            trackLinks:true,
+            accurateTrackBounce:true,
+            webvisor:true
+       });
   </script>
   <noscript>
-    <div><img src="https://mc.yandex.ru/watch/100982365" style="position:absolute; left:-9999px;" alt="" /></div>
+    <div>
+      <img src="https://mc.yandex.ru/watch/100982365" style="position:absolute; left:-9999px;" alt="" />
+    </div>
   </noscript>
   <!-- /Yandex.Metrika counter -->
 </head>
@@ -170,6 +194,10 @@
       <input type="text" id="search-query" placeholder="Введите запрос для поиска..." />
       <button id="search-button">Искать</button>
     </div>
+    <!-- Прогресс-бар поиска -->
+    <div id="progress-container" class="progress-container">
+      <div id="progress-bar" class="progress-bar"></div>
+    </div>
     <div class="results" id="results">
       <!-- Здесь будут показаны результаты -->
     </div>
@@ -202,6 +230,8 @@
     const searchButton = document.getElementById("search-button");
     const searchQueryEl = document.getElementById("search-query");
     const resultsContainer = document.getElementById("results");
+    const progressContainer = document.getElementById("progress-container");
+    const progressBar = document.getElementById("progress-bar");
 
     // Функция отображения результатов (одинакова для обоих методов поиска)
     function displayResults(results) {
@@ -267,24 +297,39 @@
       }
       const allVideos = await loadAllVideos();
       const matchingVideos = [];
-      // Показываем сообщение о поиске, чтобы пользователь ждал
+      // Показываем сообщение о поиске
       resultsContainer.innerHTML = "<p>Идёт поиск в чатах. Пожалуйста, подождите...</p>";
-      // Последовательно перебираем все видео и проверяем их чат
+
+      // Инициализируем прогресс-бар
+      progressContainer.style.display = "block";
+      progressBar.style.width = "0%";
+      const total = allVideos.length;
+      let processed = 0;
+
       for (const video of allVideos) {
         try {
-          // Ожидаем fetch файла чата (путь хранится в video.chat_path)
           const resp = await fetch(video.chat_path);
-          if (!resp.ok) continue;
+          if (!resp.ok) {
+            processed++;
+            // Обновляем прогресс
+            progressBar.style.width = `${(processed / total) * 100}%`;
+            continue;
+          }
           const chatText = await resp.text();
-          // Если в содержимом чата встречается искомый запрос (без учёта регистра)
           if (chatText.toLowerCase().includes(query.toLowerCase())) {
-            // Можно дополнительно извлечь фрагмент текста с совпадением, но пока просто добавляем видео.
             matchingVideos.push(video);
           }
         } catch (error) {
           console.error(`Ошибка загрузки чата ${video.chat_path}:`, error);
         }
+        processed++;
+        // Обновляем прогресс-бар
+        progressBar.style.width = `${(processed / total) * 100}%`;
       }
+      // Скрываем прогресс-бар после завершения поиска
+      setTimeout(() => {
+        progressContainer.style.display = "none";
+      }, 500);
       displayResults(matchingVideos);
     }
 

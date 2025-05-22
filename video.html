@@ -4,6 +4,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Pwgood Records - Видео</title>
+  <link rel="icon" type="image/png" href="https://goood.pw/assets/top-hat.png">
   <style>
     /* Сброс базовых стилей */
     * {
@@ -76,21 +77,36 @@
       margin-top: 10px;
       font-size: 0.9em;
     }
-    /* Правая колонка: чат – фиксированная ширина */
-    #chat-section {
+    /* Обновлённый контейнер чата */
+    .chat-section {
+      display: flex;
+      flex-direction: column;
       width: 350px;
       background-color: #0e0e10;
       border-radius: 8px;
-      padding: 10px;
+      /* Убираем внешние отступы внутри, чтобы контролы и чат располагались вплотную */
+      padding: 0;
       max-height: 80vh;
-      overflow-y: auto;
+      overflow: hidden;
     }
-    /* Стили для блоков управления чатом */
+
+    /* Блок управления (кнопки) — фиксированная высота, не прокручивается */
     .chat-controls {
-      display: flex;
-      justify-content: space-between;
-      margin-bottom: 10px;
+      padding: 10px;
+      background-color: #9147ff;
+      flex-shrink: 0;
     }
+
+    /* Область с сообщениями — занимает оставшийся участок, имеет собственный скролл и выравнивание сообщений по нижней границе */
+    .chat-content {
+      flex: 1;
+      padding: 10px;
+      overflow-y: auto;
+      display: flex;
+      flex-direction: column;
+      justify-content: flex-end;
+    }
+
     .chat-controls button {
       background-color: #9147ff;
       border: none;
@@ -168,10 +184,11 @@
         <button id="toggle-emojis">7tv emotes: включены</button>
         <button id="toggle-chat">Вкл/Выкл чат</button>
       </div>
-      <div id="chat-content">
+      <div id="chat-content" class="chat-content">
         <p>Загрузка чата...</p>
       </div>
     </div>
+
   </div>
 
   <script>
