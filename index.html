@@ -1,384 +1,252 @@
 <!DOCTYPE html>
 <html lang="ru">
 <head>
-  <link rel="shortcut icon" href="https://goood.pw/assets/top-hat.png">
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>PwGood Архив</title>
-  <style>
-    body {
-      display: flex;
-      margin: 0;
-      font-family: 'Arial', sans-serif;
-      background-color: #18181b;
-      color: #fff;
-      height: 100vh;
-      overflow: hidden;
-    }
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Pwgood Records - Главная</title>
+    <style>
+        /* Сброс базовых стилей */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #18181b;
+            color: #ffffff;
+        }
+        /* Шапка сайта */
+        header {
+            background-color: #9147ff;
+            padding: 10px 20px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            flex-wrap: wrap;
+        }
+        header .logo {
+            font-size: 1.8rem;
+            font-weight: bold;
+        }
+        header nav {
+            margin-left: 20px;
+            display: flex;
+            flex-wrap: wrap;
+        }
+        header nav a {
+            margin-right: 15px;
+            color: #fff;
+            text-decoration: none;
+            font-weight: bold;
+            margin-top: 5px;
+            margin-bottom: 5px;
+        }
+        /* Основная структура */
+        .main-container {
+            display: flex;
+            padding: 20px;
+            gap: 20px;
+        }
+        .sidebar {
+            flex: 1;
+            background-color: #0e0e10;
+            padding: 10px;
+            border-radius: 8px;
+            min-width: 200px;
+        }
+        .sidebar h3 {
+            margin-bottom: 10px;
+        }
+        .sidebar ul {
+            list-style: none;
+        }
+        .sidebar ul li {
+            margin-bottom: 8px;
+        }
+        .sidebar ul li a {
+            color: #9147ff;
+            text-decoration: none;
+            font-weight: bold;
+        }
+        .content {
+            flex: 3;
+        }
+        /* Секция трансляций */
+        .stream-list {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 15px;
+        }
+        .stream-card {
+            background-color: #0e0e10;
+            border-radius: 8px;
+            padding: 10px;
+            text-align: center;
+        }
+        .stream-card img {
+            width: 100%;
+            border-radius: 8px;
+        }
+        .stream-card h4 {
+            margin-top: 8px;
+            font-size: 1.1rem;
+        }
+        /* Responsive стили */
+        @media (max-width: 768px) {
+            header {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+            nav {
+                margin-left: 0;
+                margin-top: 10px;
+            }
+            .main-container {
+                flex-direction: column;
+                padding: 10px;
+            }
+            .content {
+                margin-left: 0;
+                margin-top: 20px;
+            }
+        }
+    </style>
+    <!-- Yandex.Metrika counter -->
+    <script type="text/javascript" >
+        (function(m,e,t,r,i,k,a){m[i]=m[i]||function(){(m[i].a=m[i].a||[]).push(arguments)};
+            m[i].l=1*new Date();
+            for (var j = 0; j < document.scripts.length; j++) {if (document.scripts[j].src === r) { return; }}
+            k=e.createElement(t),a=e.getElementsByTagName(t)[0],k.async=1,k.src=r,a.parentNode.insertBefore(k,a)})
+        (window, document, "script", "https://mc.yandex.ru/metrika/tag.js", "ym");
 
-    #container {
-      display: flex;
-      width: 100%;
-      height: 100%;
-    }
-
-    #video-list-container {
-      width: 20%;
-      height: 100%;
-      background-color: #202024;
-      border-right: 1px solid #2c2c2e;
-      transition: transform 0.3s ease;
-      overflow-y: auto;
-    }
-
-    #main-content {
-      display: flex;
-      flex-grow: 1;
-    }
-
-    #video-wrapper {
-      flex-grow: 1;
-      position: relative;
-      background-color: black;
-    }
-
-    #video {
-      position: absolute;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-    }
-
-    #chat-wrapper {
-      width: 30%; /* Фиксированная ширина чата */
-      max-width: 30%;
-      background-color: #18181b;
-      display: flex;
-      flex-direction: column-reverse; /* Сообщения снизу вверх */
-      overflow-y: auto;
-    }
-
-    .chat-container {
-      display: flex;
-      flex-direction: column; /* Сообщения добавляются сверху вниз визуально */
-      overflow-y: auto;
-      padding: 10px;
-    }
-
-    #video-filter {
-      display: flex;
-      justify-content: space-between;
-      padding: 10px;
-      background-color: #18181b;
-    }
-
-    #video-filter button {
-      padding: 10px;
-      background-color: #9147ff;
-      color: white;
-      border: none;
-      border-radius: 5px;
-      cursor: pointer;
-    }
-
-    #video-filter button:hover {
-      background-color: #772ce8;
-    }
-
-    .video-list {
-      display: block;
-      padding: 10px;
-      background-color: #202024;
-      overflow-y: auto;
-      max-height: 85%;
-    }
-
-    .video-list.hidden {
-      display: none;
-    }
-
-
-  </style>
-  <!-- Yandex.Metrika counter -->
-<script type="text/javascript" >
-   (function(m,e,t,r,i,k,a){m[i]=m[i]||function(){(m[i].a=m[i].a||[]).push(arguments)};
-   m[i].l=1*new Date();
-   for (var j = 0; j < document.scripts.length; j++) {if (document.scripts[j].src === r) { return; }}
-   k=e.createElement(t),a=e.getElementsByTagName(t)[0],k.async=1,k.src=r,a.parentNode.insertBefore(k,a)})
-   (window, document, "script", "https://mc.yandex.ru/metrika/tag.js", "ym");
-
-   ym(100982365, "init", {
-        clickmap:true,
-        trackLinks:true,
-        accurateTrackBounce:true,
-        webvisor:true
-   });
-</script>
-<noscript><div><img src="https://mc.yandex.ru/watch/100982365" style="position:absolute; left:-9999px;" alt="" /></div></noscript>
-<!-- /Yandex.Metrika counter -->
+        ym(100982365, "init", {
+            clickmap:true,
+            trackLinks:true,
+            accurateTrackBounce:true,
+            webvisor:true
+        });
+    </script>
+    <noscript><div><img src="https://mc.yandex.ru/watch/100982365" style="position:absolute; left:-9999px;" alt="" /></div></noscript>
+    <!-- /Yandex.Metrika counter -->
 </head>
 <body>
-  <div id="container">
-    <div id="video-list-container">
-      <button id="toggle-emotes">7tv emotes: включены</button>
-      <div id="video-filter">
-        <button id="highlights-btn">Яркие моменты</button>
-        <button id="live-btn">Прямые трансляции</button>
-      </div>
-      <div id="highlight-videos" class="video-list">
-        <h2>Яркие моменты</h2>
-        <ul id="highlights">
-        </ul>
-      </div>
-      <div id="live-videos" class="video-list hidden">
-        <h2>Прямые трансляции</h2>
-        <ul id="livestreams">
-        </ul>
-      </div>
-    </div>
+<header>
+    <div class="logo">Pwgood Records</div>
+    <nav>
+        <a href="index.html">Главная</a>
+        <a href="playlists.html">Плейлисты</a>
+        <a href="search.html">Поиск</a>
+        <a href="highlights.html">Архив ярких моментов</a>
+    </nav>
+</header>
 
-    <div id="main-content">
-      <div id="video-wrapper">
-        <div id="video"></div>
-      </div>
-      <div id="chat-wrapper">
-        <div class="chat-container" id="chat-content">
-          <p></p>
+<div class="main-container">
+    <main class="content">
+        <h2>Последние трансляции</h2>
+        <div class="stream-list">
         </div>
-      </div>
-    </div>
-  </div>
+    </main>
+</div>
+<script>
+    async function loadLivestreams() {
+        const startYear = 2022;
+        let currentYear = startYear;
+        let allStreamData = [];
 
-  <script>
-
-    async function get_livestreams_data() {
-      const response_list_video = await fetch('livestreams.json', {});
-      const list_videos = await response_list_video.json();
-      list_videos.forEach((video_data) => {
-        let li = document.createElement('li');
-        li.setAttribute('onclick', "playVideo('" + video_data.id + "', '" + video_data.chat_path + "')");
-        li.innerText = video_data.name;
-        document.getElementById('livestreams').appendChild(li);
-      });
-      }
-
-    async function get_highlights_data() {
-    const response_list_video = await fetch('highlights.json', {});
-    const list_videos = await response_list_video.json();
-    list_videos.forEach((video_data) => {
-      let li = document.createElement('li');
-      li.setAttribute('onclick', "playVideo('" + video_data.id + "', '" + video_data.chat_path + "')");
-      li.innerText = video_data.name;
-      document.getElementById('highlights').appendChild(li);
-    });
-    }
-
-    get_livestreams_data();
-    get_highlights_data();
-
-    let player;
-    const chatContent = document.getElementById("chat-content");
-    let chatMessages = [];
-    let startTime = 0;
-    let emotes = {}; // Для хранения эмоций
-    let chatUpdateInterval; // Для хранения ID интервала
-
-    function playVideo(videoId, chatSrc) {
-      if (player) {
-        player.destroy();
-      }
-      player = new YT.Player("video", {
-        videoId: videoId,
-        events: {
-          onReady: () => {
-            loadChat(chatSrc);
-            fetchEmotes();
-          },
-          onStateChange: syncChatWithVideo,
-        },
-      });
-    }
-
-    function scrollToBottom() {
-      chatContent.scrollTop = chatContent.scrollHeight;
-    }
-
-    function parseRelativeTime(relativeTime) {
-      const parts = relativeTime.split(":").map(Number); // Разбиваем строку времени
-      return parts.reduce((acc, part) => acc * 60 + part, 0); // Конвертируем [часы, минуты, секунды] в секунды
-    }
-
-
-
-    async function loadChat(chatSrc) {
-      chatContent.innerHTML = "<p>Загрузка чата...</p>";
-      clearInterval(chatUpdateInterval); // Очищаем интервал, если был установлен
-
-      try {
-        const response = await fetch(chatSrc);
-        const chatText = await response.text();
-        const chatLines = chatText.split("\n");
-
-        // Обрабатываем сообщения с относительным временем
-        chatMessages = chatLines.map((line) => {
-          const match = line.match(/\[([0-9:]+)\] (.+?): (.+)/); // Формат [0:00:00] User: peepoWeirdLeaveIntoGalaxy
-          if (match) {
-            return {
-              time: parseRelativeTime(match[1]), // Переводим относительное время в секунды
-              rawTime: match[1], // Сохраняем строку времени для отображения
-              user: match[2], // Имя пользователя
-              message: match[3], // Текст сообщения
-            };
-          }
-          return null;
-        }).filter(Boolean);
-
-        // Если сообщения есть, корректируем начальное время
-        if (chatMessages.length > 0) {
-          startTime = chatMessages[0].time;
-        } else {
-          chatMessages = [{ time: 0.0, rawTime: "0:00:00", user: "Система", message: "Не удалось загрузить чат!  flushE " }];
-        }
-
-        chatContent.innerHTML = ""; // Очищаем содержимое чата
-        scrollToBottom(); // Прокручиваем вниз при первоначальной загрузке
-      } catch (error) {
-        console.error("Ошибка загрузки чата:", error);
-      }
-    }
-
-
-    const emoteCache = {}; // Кеш для эмоций
-
-    async function fetchEmotes() {
-      if (Object.keys(emoteCache).length > 0) {
-        emotes = emoteCache; // Берем из кеша, если он уже заполнен
-        return;
-      }
-
-      const query = `
-        query EmoteSet {
-          emoteSet(id: "01FQTMFVT00000QXHG0DRS80W1") {
-            emotes {
-              name
-              data {
-                host {
-                  url
+        // Пробуем загрузить файлы начиная с 2022 года, пока не встретим ошибку (например, 404)
+        while (true) {
+            const url = `${currentYear}/livestreams.json`;
+            try {
+                const response = await fetch(url);
+                if (!response.ok) {
+                    console.log(`Файл ${url} не найден. Остановка загрузки.`);
+                    break;
                 }
-              }
+                // JSON-файл представляет собой массив объектов
+                const streams = await response.json();
+                if (Array.isArray(streams)) {
+                    allStreamData = allStreamData.concat(streams);
+                }
+            } catch (error) {
+                console.error(`Ошибка при загрузке ${url}:`, error);
+                break;
             }
+            currentYear++;
+        }
+
+        // Функция для парсинга даты из названия видео (ожидается формат "ДД.ММ.ГГГГ")
+        function parseDateFromName(name) {
+            const m = name.match(/(\d{1,2})\.(\d{1,2})\.(\d{4})/);
+            if (m) {
+                const day = parseInt(m[1]);
+                const month = parseInt(m[2]) - 1; // месяцы в JavaScript начинаются с 0
+                const year = parseInt(m[3]);
+                return new Date(year, month, day);
+            }
+            return new Date(0); // Если дата не распознана, возвращаем "очень старую" дату
+        }
+
+        // Сортируем записи от новых к старым
+        allStreamData.sort((a, b) => {
+            const dateA = parseDateFromName(a.name);
+            const dateB = parseDateFromName(b.name);
+            return dateB - dateA; // чем больше дата (новее), тем раньше в списке
+        });
+
+        // Организация пагинации: показываем батчами по 10 видео
+        let displayedCount = 0;
+        const batchSize = 10;
+        const streamListEl = document.querySelector('.stream-list');
+
+        function renderNextBatch() {
+          if (!streamListEl) return;
+
+          const end = Math.min(displayedCount + batchSize, allStreamData.length);
+          for (let i = displayedCount; i < end; i++) {
+            const stream = allStreamData[i];
+            const card = document.createElement('div');
+            card.classList.add('stream-card');
+
+            // Формируем YouTube-превью
+            const previewUrl = `https://img.youtube.com/vi/${stream.id}/hqdefault.jpg`;
+
+            card.innerHTML = `
+              <img src="${previewUrl}" alt="${stream.name || 'Без названия'}">
+              <h4>${stream.name || 'Без названия'}</h4>
+            `;
+            // Перенаправление на страницу просмотра видео при клике по карточке
+            card.addEventListener('click', () => {
+              window.location.href = `video.html?id=${stream.id}`;
+            });
+
+            streamListEl.appendChild(card);
+          }
+          displayedCount = end;
+
+          // Если высота страницы меньше высоты окна (с небольшим запасом) и ещё есть данные, загружаем следующую партию
+          if (document.body.offsetHeight < window.innerHeight + 100 && displayedCount < allStreamData.length) {
+            renderNextBatch();
           }
         }
-      `;
-      try {
-        const response = await fetch("https://7tv.io/v3/gql", {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({ query }),
-        });
-        const data = await response.json();
-        data.data.emoteSet.emotes.forEach((emote) => {
-          emotes[emote.name] = `https:${emote.data.host.url}/1x.webp`; // Ссылка на изображение эмоции
-        });
-
-        // Сохраняем эмоции в кеш
-        Object.assign(emoteCache, emotes);
-      } catch (error) {
-        console.error("Ошибка загрузки эмоций:", error);
-      }
-    }
 
 
-    function syncChatWithVideo(event) {
-      if (event.data === YT.PlayerState.PLAYING) {
-        chatUpdateInterval = setInterval(() => {
-          const currentTime = player.getCurrentTime();
-          const visibleMessages = chatMessages
-            .filter((msg) => msg.time <= currentTime)
-            .slice(-50);
 
-          const existingMessages = Array.from(chatContent.children).map((child) => child.dataset.msgId);
+        // Отображаем первые 10 видео
+        renderNextBatch();
 
-          visibleMessages.forEach((msg) => {
-            if (!existingMessages.includes(msg.time.toString())) {
-              const chatMessage = document.createElement("div");
-              chatMessage.className = "chat-message";
-              chatMessage.dataset.msgId = msg.time.toString(); // Уникальный идентификатор для сообщения
-              chatMessage.innerHTML = `<strong style="color: ${getUserColor(msg.user)}">${msg.user}:</strong> ${replaceWithEmotes(
-                msg.message
-              )}`;
-              chatContent.appendChild(chatMessage);
+        // Подгрузка следующей порции видео при прокрутке страницы (инфинити-скролл)
+        window.addEventListener('scroll', () => {
+            // Если пользователь приблизился к нижней границе страницы, подгружаем новые видео
+            if ((window.innerHeight + window.scrollY) >= document.body.offsetHeight - 100) {
+                renderNextBatch();
             }
-          });
-
-          // Удаляем лишние сообщения
-          const extraMessages = Array.from(chatContent.children).filter(
-            (child) => !visibleMessages.find((msg) => msg.time.toString() === child.dataset.msgId)
-          );
-          extraMessages.forEach((msg) => chatContent.removeChild(msg));
-          scrollToBottom();
-        }, 100);
-      } else if (event.data === YT.PlayerState.PAUSED) {
-        clearInterval(chatUpdateInterval);
-      }
+        });
     }
 
+    document.addEventListener('DOMContentLoaded', loadLivestreams);
+</script>
 
 
-    function replaceWithEmotes(message) {
-      return message
-        .split(" ")
-        .map((word) => (emotesEnabled && emotes[word] ? `<img title="${word}" src="${emotes[word]}" alt="${word}" class="emote">` : word))
-        .join(" ");
-    }
-
-
-    const getUserColor = (str) => {
-      let hash = 0;
-      str.split('').forEach(char => {
-        hash = char.charCodeAt(0) + ((hash << 5) - hash)
-      })
-      let colour = '#'
-      for (let i = 0; i < 3; i++) {
-        const value = (hash >> (i * 8)) & 0xff
-        colour += value.toString(16).padStart(2, '0')
-      }
-      return colour
-    }
-
-    const tag = document.createElement("script");
-    tag.src = "https://www.youtube.com/iframe_api";
-    const firstScriptTag = document.getElementsByTagName("script")[0];
-    firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
-
-    const toggleEmotesButton = document.getElementById("toggle-emotes");
-    let emotesEnabled = true; // Флаг для отображения эмоций
-
-    toggleEmotesButton.addEventListener("click", () => {
-      emotesEnabled = !emotesEnabled;
-      toggleEmotesButton.textContent = `7tv emotes: ${emotesEnabled ? "включены" : "выключены"}`;
-    });
-
-
-    const highlightsBtn = document.getElementById("highlights-btn");
-    const liveBtn = document.getElementById("live-btn");
-    const highlightVideos = document.getElementById("highlight-videos");
-    const liveVideos = document.getElementById("live-videos");
-
-    highlightsBtn.addEventListener("click", () => {
-      highlightVideos.classList.remove("hidden");
-      liveVideos.classList.add("hidden");
-    });
-
-    liveBtn.addEventListener("click", () => {
-      highlightVideos.classList.add("hidden");
-      liveVideos.classList.remove("hidden");
-    });
-
-
-  </script>
 </body>
 </html>

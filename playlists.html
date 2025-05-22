@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Pwgood Records - Плейлисты</title>
+  <style>
+    /* Сброс базовых стилей */
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #18181b;
+      color: #fff;
+      line-height: 1.5;
+    }
+    /* Шапка сайта */
+    header {
+      background-color: #9147ff;
+      padding: 10px 20px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+    }
+    header .logo {
+      font-size: 1.8rem;
+      font-weight: bold;
+    }
+    header nav {
+      margin-left: 20px;
+      display: flex;
+      flex-wrap: wrap;
+    }
+    header nav a {
+      margin-right: 15px;
+      color: #fff;
+      text-decoration: none;
+      font-weight: bold;
+      margin-top: 5px;
+      margin-bottom: 5px;
+    }
+    /* Контейнер заглушки */
+    .placeholder-container {
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      height: calc(100vh - 60px); /* предполагаемая высота header примерно 60px */
+      text-align: center;
+      padding: 20px;
+    }
+    .placeholder-container h1 {
+      font-size: 3rem;
+      margin-bottom: 20px;
+    }
+    .placeholder-container p {
+      font-size: 1.2rem;
+      margin-bottom: 40px;
+    }
+    /* Анимированный спиннер */
+    .spinner {
+      border: 8px solid #303030;
+      border-top: 8px solid #9147ff;
+      border-radius: 50%;
+      width: 80px;
+      height: 80px;
+      animation: spin 1.5s linear infinite;
+      margin-bottom: 20px;
+    }
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+    /* Mobile adjustments */
+    @media (max-width: 768px) {
+      .placeholder-container h1 {
+        font-size: 2.5rem;
+      }
+      .placeholder-container p {
+        font-size: 1rem;
+      }
+    }
+  </style>
+    <!-- Yandex.Metrika counter -->
+  <script type="text/javascript">
+    (function(m,e,t,r,i,k,a){m[i]=m[i]||function(){(m[i].a=m[i].a||[]).push(arguments)};
+    m[i].l=1*new Date();
+    for(var j=0;j<document.scripts.length;j++){
+      if(document.scripts[j].src===r){return;}
+    }
+    k=e.createElement(t),a=e.getElementsByTagName(t)[0],
+    k.async=1,k.src=r,a.parentNode.insertBefore(k,a)})
+    (window, document, "script", "https://mc.yandex.ru/metrika/tag.js", "ym");
+    ym(100982365, "init", { clickmap:true, trackLinks:true, accurateTrackBounce:true, webvisor:true });
+  </script>
+  <noscript>
+    <div><img src="https://mc.yandex.ru/watch/100982365" style="position:absolute; left:-9999px;" alt="" /></div>
+  </noscript>
+  <!-- /Yandex.Metrika counter -->
+</head>
+<body>
+  <header>
+    <div class="logo">Pwgood Records</div>
+    <nav>
+      <a href="index.html">Главная</a>
+      <a href="playlists.html">Плейлисты</a>
+      <a href="search.html">Поиск</a>
+      <a href="highlights.html">Архив ярких моментов</a>
+    </nav>
+  </header>
+
+  <div class="placeholder-container">
+    <div class="spinner"></div>
+    <h1>Страница в разработке</h1>
+    <p>Загляните позже!</p>
+  </div>
+</body>
+</html>
