@@ -5,44 +5,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Pwgood Records - Главная</title>
     <link rel="icon" type="image/png" href="https://goood.pw/assets/top-hat.png">
+    <link rel="stylesheet" href="styles.css" type="text/css">
     <style>
-        /* Сброс базовых стилей */
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-        body {
-            font-family: Arial, sans-serif;
-            background-color: #18181b;
-            color: #ffffff;
-        }
-        /* Шапка сайта */
-        header {
-            background-color: #9147ff;
-            padding: 10px 20px;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            flex-wrap: wrap;
-        }
-        header .logo {
-            font-size: 1.8rem;
-            font-weight: bold;
-        }
-        header nav {
-            margin-left: 20px;
-            display: flex;
-            flex-wrap: wrap;
-        }
-        header nav a {
-            margin-right: 15px;
-            color: #fff;
-            text-decoration: none;
-            font-weight: bold;
-            margin-top: 5px;
-            margin-bottom: 5px;
-        }
         /* Основная структура */
         .main-container {
             display: flex;
@@ -132,8 +96,8 @@
     <!-- /Yandex.Metrika counter -->
 </head>
 <body>
-<header>
-    <div class="logo">Pwgood Records</div>
+<header class="no-link-styles">
+    <a class="logo" href="/PwgoodChatRecords">Pwgood Records</a>
     <nav>
         <a href="index.html">Главная</a>
         <a href="playlists.html">Плейлисты</a>
@@ -213,14 +177,13 @@
             const previewUrl = `https://img.youtube.com/vi/${stream.id}/hqdefault.jpg`;
 
             card.innerHTML = `
-              <img src="${previewUrl}" alt="${stream.name || 'Без названия'}">
-              <h4>${stream.name || 'Без названия'}</h4>
+              <a href="https://youtube.com/watch?v=${stream.id}" target="_blank">
+                  <img src="${previewUrl}" alt="${stream.name || 'Без названия'}">
+              </a>
+              <a href="/PwgoodChatRecords/video.html?id=${stream.id}" target="_blank" class="no-link-styles">
+                  <h4>${stream.name || 'Без названия'}</h4>
+              </a>
             `;
-            // Перенаправление на страницу просмотра видео при клике по карточке
-            card.addEventListener('click', () => {
-              window.location.href = `video.html?id=${stream.id}`;
-            });
-
             streamListEl.appendChild(card);
           }
           displayedCount = end;

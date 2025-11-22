@@ -5,26 +5,8 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Pwgood Records - Архив ярких моментов</title>
   <link rel="icon" type="image/png" href="https://goood.pw/assets/top-hat.png">
+  <link rel="stylesheet" href="styles.css" type="text/css">
   <style>
-    /* Общий сброс и базовые стили */
-    * { margin: 0; padding: 0; box-sizing: border-box; }
-    body { font-family: Arial, sans-serif; background-color: #18181b; color: #ffffff; }
-    header {
-      background-color: #9147ff;
-      padding: 10px 20px;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      flex-wrap: wrap;
-    }
-    header .logo { font-size: 1.8rem; font-weight: bold; }
-    header nav {
-      margin-left: 20px; display: flex; flex-wrap: wrap;
-    }
-    header nav a {
-      margin-right: 15px; color: #fff; text-decoration: none; font-weight: bold;
-      margin-top: 5px; margin-bottom: 5px;
-    }
     /* Основной контейнер */
     .main-container { padding: 20px; }
     .main-container h2 { margin-bottom: 20px; }
@@ -69,15 +51,15 @@
   <!-- /Yandex.Metrika counter -->
 </head>
 <body>
-  <header>
-    <div class="logo">Pwgood Records</div>
-    <nav>
-      <a href="index.html">Главная</a>
-      <a href="playlists.html">Плейлисты</a>
-      <a href="search.html">Поиск</a>
-      <a href="highlights.html">Архив ярких моментов</a>
-    </nav>
-  </header>
+<header class="no-link-styles">
+  <a class="logo" href="/PwgoodChatRecords">Pwgood Records</a>
+  <nav>
+    <a href="index.html">Главная</a>
+    <a href="playlists.html">Плейлисты</a>
+    <a href="search.html">Поиск</a>
+    <a href="highlights.html">Архив ярких моментов</a>
+  </nav>
+</header>
   <div class="main-container">
     <h2>Архив ярких моментов</h2>
     <div class="stream-list" id="highlight-list">
@@ -129,13 +111,13 @@
         // Формируем URL превью с YouTube по video id
         const previewUrl = `https://img.youtube.com/vi/${highlight.id}/hqdefault.jpg`;
         card.innerHTML = `
-          <img src="${previewUrl}" alt="${highlight.name || 'Без названия'}">
-          <h4>${highlight.name || 'Без названия'}</h4>
+          <a href="https://youtube.com/watch?v=${highlight.id}" target="_blank">
+              <img src="${previewUrl}" alt="${highlight.name || 'Без названия'}">
+          </a>
+          <a href="/PwgoodChatRecords/video.html?id=${highlight.id}" target="_blank" class="no-link-styles">
+              <h4>${highlight.name || 'Без названия'}</h4>
+          </a>
         `;
-        // При клике переходим на страницу просмотра видео
-        card.addEventListener("click", () => {
-          window.location.href = `video.html?id=${highlight.id}`;
-        });
         highlightListEl.appendChild(card);
       }
       displayedCount = end;
