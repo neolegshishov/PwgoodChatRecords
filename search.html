@@ -6,6 +6,7 @@
   <title>Pwgood Records - Поиск</title>
   <link rel="icon" type="image/png" href="https://goood.pw/assets/top-hat.png">
   <link rel="stylesheet" href="styles.css" type="text/css">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/pako/2.1.0/pako.min.js"></script>
   <style>
     /* Контейнер поиска */
     .search-container {
@@ -256,49 +257,61 @@
       displayResults(results);
     }
 
-    // Функция поиска в чате
     async function searchInChat(query) {
-      // Предупреждение уже показано пользователю; дополнительно подтверждаем
-      if (!confirm("Поиск в чате может занять очень много времени. Продолжить?")) {
-        return;
-      }
-      const allVideos = await loadAllVideos();
-      const matchingVideos = [];
-      // Показываем сообщение о поиске
-      resultsContainer.innerHTML = "<p>Идёт поиск в чатах. Пожалуйста, подождите...</p>";
+  if (!confirm("Поиск в чате может занять очень много времени. Продолжить?")) {
+    return;
+  }
 
-      // Инициализируем прогресс-бар
-      progressContainer.style.display = "block";
-      progressBar.style.width = "0%";
-      const total = allVideos.length;
-      let processed = 0;
+  const allVideos = await loadAllVideos();
+  const matchingVideos = [];
 
-      for (const video of allVideos) {
-        try {
-          const resp = await fetch(video.chat_path);
-          if (!resp.ok) {
-            processed++;
-            // Обновляем прогресс
-            progressBar.style.width = `${(processed / total) * 100}%`;
-            continue;
-          }
-          const chatText = await resp.text();
-          if (chatText.toLowerCase().includes(query.toLowerCase())) {
-            matchingVideos.push(video);
-          }
-        } catch (error) {
-          console.error(`Ошибка загрузки чата ${video.chat_path}:`, error);
-        }
+  resultsContainer.innerHTML = "<p>Идёт поиск в чатах. Пожалуйста, подождите...</p>";
+
+  progressContainer.style.display = "block";
+  progressBar.style.width = "0%";
+
+  const total = allVideos.length;
+  let processed = 0;
+
+  for (const video of allVideos) {
+    try {
+      const resp = await fetch(video.chat_path);
+      if (!resp.ok) {
         processed++;
-        // Обновляем прогресс-бар
         progressBar.style.width = `${(processed / total) * 100}%`;
+        continue;
       }
-      // Скрываем прогресс-бар после завершения поиска
-      setTimeout(() => {
-        progressContainer.style.display = "none";
-      }, 500);
-      displayResults(matchingVideos);
+
+      let chatText;
+
+      if (video.chat_path.endsWith(".gz")) {
+        // --- GZIP ---
+        const arrayBuffer = await resp.arrayBuffer();
+        const uint8 = new Uint8Array(arrayBuffer);
+        chatText = pako.ungzip(uint8, { to: "string" });
+      } else {
+        // --- Обычный текст ---
+        chatText = await resp.text();
+      }
+
+      if (chatText.toLowerCase().includes(query.toLowerCase())) {
+        matchingVideos.push(video);
+      }
+
+    } catch (error) {
+      console.error(`Ошибка загрузки чата ${video.chat_path}:`, error);
     }
+
+    processed++;
+    progressBar.style.width = `${(processed / total) * 100}%`;
+  }
+
+  setTimeout(() => {
+    progressContainer.style.display = "none";
+  }, 500);
+
+  displayResults(matchingVideos);
+}
 
     // Обработчик кнопки "Искать"
     searchButton.addEventListener("click", async () => {
