@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Pwgood Records - Главная</title>
+    <link rel="icon" type="image/png" href="https://goood.pw/assets/top-hat.png">
+    <link rel="stylesheet" href="styles.css" type="text/css">
+    <style>
+        /* Основная структура */
+        .main-container {
+            display: flex;
+            padding: 20px;
+            gap: 20px;
+        }
+        .sidebar {
+            flex: 1;
+            background-color: #0e0e10;
+            padding: 10px;
+            border-radius: 8px;
+            min-width: 200px;
+        }
+        .sidebar h3 {
+            margin-bottom: 10px;
+        }
+        .sidebar ul {
+            list-style: none;
+        }
+        .sidebar ul li {
+            margin-bottom: 8px;
+        }
+        .sidebar ul li a {
+            color: #9147ff;
+            text-decoration: none;
+            font-weight: bold;
+        }
+        .content {
+            flex: 3;
+        }
+        /* Секция трансляций */
+        .stream-list {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 15px;
+        }
+        .stream-card {
+            background-color: #0e0e10;
+            border-radius: 8px;
+            padding: 10px;
+            text-align: center;
+        }
+        .stream-card img {
+            width: 100%;
+            border-radius: 8px;
+        }
+        .stream-card h4 {
+            margin-top: 8px;
+            font-size: 1.1rem;
+        }
+        /* Responsive стили */
+        @media (max-width: 768px) {
+            header {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+            nav {
+                margin-left: 0;
+                margin-top: 10px;
+            }
+            .main-container {
+                flex-direction: column;
+                padding: 10px;
+            }
+            .content {
+                margin-left: 0;
+                margin-top: 20px;
+            }
+        }
+    </style>
+    <!-- Yandex.Metrika counter -->
+    <script type="text/javascript" >
+        (function(m,e,t,r,i,k,a){m[i]=m[i]||function(){(m[i].a=m[i].a||[]).push(arguments)};
+            m[i].l=1*new Date();
+            for (var j = 0; j < document.scripts.length; j++) {if (document.scripts[j].src === r) { return; }}
+            k=e.createElement(t),a=e.getElementsByTagName(t)[0],k.async=1,k.src=r,a.parentNode.insertBefore(k,a)})
+        (window, document, "script", "https://mc.yandex.ru/metrika/tag.js", "ym");
+
+        ym(100982365, "init", {
+            clickmap:true,
+            trackLinks:true,
+            accurateTrackBounce:true,
+            webvisor:true
+        });
+    </script>
+    <noscript><div><img src="https://mc.yandex.ru/watch/100982365" style="position:absolute; left:-9999px;" alt="" /></div></noscript>
+    <!-- /Yandex.Metrika counter -->
+</head>
+<body>
+<header class="no-link-styles">
+    <a class="logo" href="/PwgoodChatRecords">Pwgood Records</a>
+    <nav>
+        <a href="index.html">Главная</a>
+        <a href="search.html">Поиск</a>
+        <a href="highlights.html">Архив ярких моментов</a>
+    </nav>
+</header>
+
+<div class="main-container">
+    <main class="content">
+        <h2>Последние трансляции</h2>
+        <div class="stream-list">
+        </div>
+    </main>
+</div>
+<script>
+    async function loadLivestreams() {
+        let currentYear = 2022;
+        let allStreamData = [];
+
+        // Пробуем загрузить файлы начиная с 2022 года, пока не встретим ошибку (например, 404)
+        while (true) {
+            const url = `${currentYear}/livestreams.json`;
+            try {
+                const response = await fetch(url);
+                if (!response.ok) {
+                    console.log(`Файл ${url} не найден. Остановка загрузки.`);
+                    break;
+                }
+                // JSON-файл представляет собой массив объектов
+                const streams = await response.json();
+                if (Array.isArray(streams)) {
+                    allStreamData = allStreamData.concat(streams);
+                }
+            } catch (error) {
+                console.error(`Ошибка при загрузке ${url}:`, error);
+                break;
+            }
+            currentYear++;
+        }
+
+        // Функция для парсинга даты из названия видео (ожидается формат "ДД.ММ.ГГГГ")
+        function parseDateFromName(name) {
+            const m = name.match(/(\d{1,2})\.(\d{1,2})\.(\d{4})/);
+            if (m) {
+                const day = parseInt(m[1]);
+                const month = parseInt(m[2]) - 1; // месяцы в JavaScript начинаются с 0
+                const year = parseInt(m[3]);
+                return new Date(year, month, day);
+            }
+            return new Date(0); // Если дата не распознана, возвращаем "очень старую" дату
+        }
+
+        // Сортируем записи от новых к старым
+        allStreamData.sort((a, b) => {
+            const dateA = parseDateFromName(a.name);
+            const dateB = parseDateFromName(b.name);
+            return dateB - dateA; // чем больше дата (новее), тем раньше в списке
+        });
+
+        // Организация пагинации: показываем батчами по 10 видео
+        let displayedCount = 0;
+        const batchSize = 10;
+        const streamListEl = document.querySelector('.stream-list');
+
+        function renderNextBatch() {
+          if (!streamListEl) return;
+
+          const end = Math.min(displayedCount + batchSize, allStreamData.length);
+          for (let i = displayedCount; i < end; i++) {
+            const stream = allStreamData[i];
+            const card = document.createElement('div');
+            card.classList.add('stream-card');
+
+            // Формируем YouTube-превью
+            const previewUrl = `https://razcraft.duckdns.org:6443/vi/${stream.id}/hqdefault.jpg`;
+
+            card.innerHTML = `
+              <a href="/PwgoodChatRecords/video.html?id=${stream.id}" target="_blank">
+                  <img src="${previewUrl}" alt="${stream.name || 'Без названия'}">
+              </a>
+              <a href="/PwgoodChatRecords/video.html?id=${stream.id}" target="_blank" class="no-link-styles">
+                  <h4>${stream.name || 'Без названия'}</h4>
+              </a>
+            `;
+            streamListEl.appendChild(card);
+          }
+          displayedCount = end;
+
+          // Если высота страницы меньше высоты окна (с небольшим запасом) и ещё есть данные, загружаем следующую партию
+          if (document.body.offsetHeight < window.innerHeight + 100 && displayedCount < allStreamData.length) {
+            renderNextBatch();
+          }
+        }
+
+
+
+        // Отображаем первые 10 видео
+        renderNextBatch();
+
+        // Подгрузка следующей порции видео при прокрутке страницы (инфинити-скролл)
+        window.addEventListener('scroll', () => {
+            // Если пользователь приблизился к нижней границе страницы, подгружаем новые видео
+            if ((window.innerHeight + window.scrollY) >= document.body.offsetHeight - 100) {
+                renderNextBatch();
+            }
+        });
+    }
+
+    document.addEventListener('DOMContentLoaded', loadLivestreams);
+</script>
+
+
+</body>
+</html>
