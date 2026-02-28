@@ -6,6 +6,7 @@
   <title>Pwgood Records - Видео</title>
   <link rel="icon" type="image/png" href="https://goood.pw/assets/top-hat.png">
   <link rel="stylesheet" href="styles.css" type="text/css">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/pako/2.1.0/pako.min.js"></script>
   <style>
     /* Основная структура – на ПК: два столбца */
     .main-container {
@@ -187,43 +188,62 @@
 
     // --- Функция загрузки чата из файла ---
     async function loadChat(chatSrc) {
-      chatContent.innerHTML = "<p>Загрузка чата...</p>";
-      clearInterval(chatUpdateInterval);
-      try {
-        const response = await fetch(chatSrc);
-        const chatText = await response.text();
-        const chatLines = chatText.split("\n");
-        chatMessages = chatLines.map((line) => {
-          const match = line.match(/\[([0-9:]+)\] (.+?): (.+)/);
-          if (match) {
-            return {
-              time: parseRelativeTime(match[1]),
-              rawTime: match[1],
-              user: match[2],
-              message: match[3]
-            };
-          }
-          return null;
-        }).filter(Boolean);
+    chatContent.innerHTML = "<p>Загрузка чата...</p>";
+    clearInterval(chatUpdateInterval);
 
-        if (chatMessages.length > 0) {
-          startTime = chatMessages[0].time;
+    try {
+        const response = await fetch(chatSrc);
+
+        let chatText;
+
+        if (chatSrc.endsWith(".gz")) {
+            // --- GZIP ---
+            const arrayBuffer = await response.arrayBuffer();
+            const uint8 = new Uint8Array(arrayBuffer);
+            const decompressed = pako.ungzip(uint8, { to: "string" });
+            chatText = decompressed;
         } else {
-          chatMessages = [{
-            time: 0.0,
-            rawTime: "0:00:00",
-            user: "Система",
-            message: "Не удалось загрузить чат!"
-          }];
+            // --- Обычный текст ---
+            chatText = await response.text();
         }
 
-        chatContent.innerHTML = "";
-        scrollToBottom();
-      } catch (error) {
-        console.error("Ошибка загрузки чата:", error);
-        chatContent.innerHTML = "<p>Ошибка загрузки чата</p>";
-      }
+    const chatLines = chatText.split("\n");
+
+    chatMessages = chatLines
+      .map((line) => {
+        const match = line.match(/\[([0-9:]+)\] (.+?): (.+)/);
+        if (match) {
+          return {
+            time: parseRelativeTime(match[1]),
+            rawTime: match[1],
+            user: match[2],
+            message: match[3]
+          };
+        }
+        return null;
+      })
+      .filter(Boolean);
+
+    if (chatMessages.length > 0) {
+      startTime = chatMessages[0].time;
+    } else {
+      chatMessages = [{
+        time: 0.0,
+        rawTime: "0:00:00",
+        user: "Система",
+        message: "Не удалось загрузить чат!"
+      }];
     }
+
+    chatContent.innerHTML = "";
+    scrollToBottom();
+
+  } catch (error) {
+    console.error("Ошибка загрузки чата:", error);
+    chatContent.innerHTML = "<p>Ошибка загрузки чата</p>";
+  }
+}
+
 
     // --- Функция загрузки эмоций через 7tv; используется кеш ---
     const emoteCache = {};
