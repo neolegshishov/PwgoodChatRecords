@@ -100,6 +100,8 @@
     <a class="logo" href="/PwgoodChatRecords">Pwgood Records</a>
     <nav>
         <a href="index.html">Главная</a>
+        <a href="calendar.html">Календарь</a>
+        <a href="games.html">Игры</a>
         <a href="search.html">Поиск</a>
         <a href="highlights.html">Архив ярких моментов</a>
     </nav>
@@ -173,10 +175,13 @@
 
             // Формируем YouTube-превью
             const previewUrl = `https://razcraft.duckdns.org:6443/vi/${stream.id}/hqdefault.jpg`;
+            const ytFallback = `https://img.youtube.com/vi/${stream.id}/hqdefault.jpg`;
 
             card.innerHTML = `
               <a href="/PwgoodChatRecords/video.html?id=${stream.id}" target="_blank">
-                  <img src="${previewUrl}" alt="${stream.name || 'Без названия'}">
+                  <img src="${previewUrl}"
+                  alt="${stream.name || 'Без названия'}"
+                  onerror="this.onerror=null; this.src='${ytFallback}';">
               </a>
               <a href="/PwgoodChatRecords/video.html?id=${stream.id}" target="_blank" class="no-link-styles">
                   <h4>${stream.name || 'Без названия'}</h4>

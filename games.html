@@ -1,0 +1,259 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <title>Pwgood Records — Игры</title>
+  <link rel="stylesheet" href="styles.css">
+
+  <style>
+    body {
+      overflow-x: hidden;
+    }
+
+    .games-container {
+      display: flex;
+      gap: 20px;
+      padding: 20px;
+    }
+
+    .games-grid {
+      width: 330px;
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+      gap: 14px;
+      height: 85vh;
+      overflow-y: auto;
+      padding-right: 10px;
+    }
+
+    .game-card {
+      background: #18181b;
+      border-radius: 8px;
+      border: 1px solid #222;
+      cursor: pointer;
+      transition: 0.2s;
+      padding-bottom: 8px;
+    }
+
+    .game-card:hover {
+      transform: translateY(-3px);
+      border-color: #9147ff;
+    }
+
+    .game-card img {
+      width: 100%;
+      border-radius: 8px 8px 0 0;
+      object-fit: cover;
+    }
+
+    .game-card-title {
+      padding: 6px;
+      font-size: 0.9rem;
+      color: #e0e0e0;
+      text-align: center;
+      line-height: 1.1rem;
+    }
+
+    .streams-panel {
+      flex: 1;
+      background: #0e0e10;
+      padding: 15px;
+      border-radius: 8px;
+      min-height: 85vh;
+      overflow-y: auto;
+    }
+
+    .stream-card {
+      background: #18181b;
+      padding: 10px;
+      border-radius: 8px;
+      margin-bottom: 12px;
+      border: 1px solid #222;
+      display: flex;
+      gap: 12px;
+    }
+
+    .stream-card img {
+      width: 160px;
+      height: 90px;
+      border-radius: 6px;
+      object-fit: cover;
+    }
+
+    .stream-card a {
+      color: #9147ff;
+      text-decoration: none;
+      font-weight: bold;
+      font-size: 1rem;
+    }
+
+    .stream-card a:hover {
+      text-decoration: underline;
+    }
+
+    @media (max-width: 900px) {
+      .games-container {
+        flex-direction: column;
+      }
+      .games-grid {
+        width: 100%;
+        height: auto;
+        grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+      }
+      .stream-card {
+        flex-direction: column;
+      }
+      .stream-card img {
+        width: 100%;
+        height: auto;
+      }
+    }
+  </style>
+  <!-- Yandex.Metrika counter -->
+    <script type="text/javascript" >
+        (function(m,e,t,r,i,k,a){m[i]=m[i]||function(){(m[i].a=m[i].a||[]).push(arguments)};
+            m[i].l=1*new Date();
+            for (var j = 0; j < document.scripts.length; j++) {if (document.scripts[j].src === r) { return; }}
+            k=e.createElement(t),a=e.getElementsByTagName(t)[0],k.async=1,k.src=r,a.parentNode.insertBefore(k,a)})
+        (window, document, "script", "https://mc.yandex.ru/metrika/tag.js", "ym");
+
+        ym(100982365, "init", {
+            clickmap:true,
+            trackLinks:true,
+            accurateTrackBounce:true,
+            webvisor:true
+        });
+    </script>
+    <noscript><div><img src="https://mc.yandex.ru/watch/100982365" style="position:absolute; left:-9999px;" alt="" /></div></noscript>
+    <!-- /Yandex.Metrika counter -->
+</head>
+
+<body>
+<header class="no-link-styles">
+  <a class="logo" href="/PwgoodChatRecords">Pwgood Records</a>
+  <nav>
+    <a href="index.html">Главная</a>
+    <a href="calendar.html">Календарь</a>
+    <a href="games.html">Игры</a>
+    <a href="search.html">Поиск</a>
+    <a href="highlights.html">Архив ярких моментов</a>
+  </nav>
+</header>
+
+<div class="games-container">
+
+  <div class="games-grid" id="games"></div>
+
+  <div class="streams-panel">
+    <h2 id="game-title">Выберите игру</h2>
+    <div id="streams"></div>
+  </div>
+
+</div>
+
+<script>
+async function loadData() {
+  const response = await fetch("by_games.json");
+  return await response.json();
+}
+
+/* Генерация box-art, если нет box_art в JSON */
+function generateBoxArtFromName(gameName) {
+  const titleCase = gameName
+    .toLowerCase()
+    .split(" ")
+    .map(w => w.charAt(0).toUpperCase() + w.slice(1))
+    .join(" ");
+
+  const cleaned = titleCase.replace(/[^a-zA-Z0-9:\- ]/g, "");
+  const encoded = cleaned.replace(/ /g, "%20");
+
+  return `https://static-cdn.jtvnw.net/ttv-boxart/${encoded}-285x380.jpg`;
+}
+
+/* box_art из JSON или генерация */
+function getBoxArt(gameName, boxArtTemplate) {
+  if (boxArtTemplate) {
+    return boxArtTemplate
+      .replace("{width}", "285")
+      .replace("{height}", "380");
+  }
+  return generateBoxArtFromName(gameName);
+}
+
+/* Превью стрима */
+function getPreview(videoId) {
+  const main = `https://razcraft.duckdns.org:6443/vi/${videoId}/hqdefault.jpg`;
+  const fallback = `https://img.youtube.com/vi/${videoId}/hqdefault.jpg`;
+  return { main, fallback };
+}
+
+/* Парсим дату из названия */
+function extractDate(title) {
+  const match = title.match(/^(\d{2})\.(\d{2})\.(\d{4})/);
+  if (!match) return new Date(0);
+  const [_, d, m, y] = match;
+  return new Date(`${y}-${m}-${d}`);
+}
+
+/* Рендер списка игр */
+function renderGames(data) {
+  const container = document.getElementById("games");
+
+  Object.entries(data).forEach(([gameName, gameObj]) => {
+    const videos = gameObj.videos || [];
+    const boxArt = gameObj.box_art;
+
+    const card = document.createElement("div");
+    card.className = "game-card";
+
+    const img = document.createElement("img");
+    img.src = getBoxArt(gameName, boxArt);
+
+    const title = document.createElement("div");
+    title.className = "game-card-title";
+    title.innerHTML = `${gameName}<br><small>${videos.length} стримов</small>`;
+
+    card.appendChild(img);
+    card.appendChild(title);
+
+    card.onclick = () => renderStreams(gameName, videos);
+
+    container.appendChild(card);
+  });
+}
+
+/* Рендер стримов выбранной игры */
+function renderStreams(gameName, streams) {
+  document.getElementById("game-title").textContent = gameName;
+
+  const container = document.getElementById("streams");
+  container.innerHTML = "";
+
+  streams
+    .slice()
+    .sort((a, b) => extractDate(b.title) - extractDate(a.title))
+    .forEach(stream => {
+      const card = document.createElement("div");
+      card.className = "stream-card";
+
+      const preview = getPreview(stream.id);
+
+      card.innerHTML = `
+        <img src="${preview.main}" onerror="this.onerror=null;this.src='${preview.fallback}'">
+        <div>
+          <a href="video.html?id=${stream.id}" target="_blank">${stream.title}</a>
+        </div>
+      `;
+
+      container.appendChild(card);
+    });
+}
+
+loadData().then(data => {
+  renderGames(data);
+});
+</script>
+
+</body>
+</html>

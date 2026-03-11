@@ -94,6 +94,45 @@
         max-height: none;
       }
     }
+    .video-meta-block {
+      margin-top: 15px;
+      background: #18181b;
+      padding: 12px;
+      border-radius: 8px;
+      border: 1px solid #222;
+    }
+
+    .video-stats {
+      color: #cfcfcf;
+      margin-top: 6px;
+      font-size: 0.9rem;
+    }
+
+    .video-description {
+      margin-top: 10px;
+      white-space: pre-wrap;
+      line-height: 1.3rem;
+      color: #e0e0e0;
+    }
+
+    .channel-info {
+      display: flex;
+      align-items: center;
+      margin-top: 12px;
+      gap: 10px;
+    }
+
+    .channel-info img {
+      width: 42px;
+      height: 42px;
+      border-radius: 50%;
+    }
+
+    .channel-info .channel-name {
+      font-size: 1rem;
+      font-weight: bold;
+    }
+
   </style>
   <!-- Yandex.Metrika counter -->
   <script type="text/javascript">
@@ -124,6 +163,7 @@
   <a class="logo" href="/PwgoodChatRecords">Pwgood Records</a>
   <nav>
     <a href="index.html">Главная</a>
+    <a href="calendar.html">Календарь</a>
     <a href="search.html">Поиск</a>
     <a href="highlights.html">Архив ярких моментов</a>
   </nav>
@@ -136,11 +176,13 @@
         <!-- Плеер будет вставлен в div#player -->
         <div id="player"></div>
       </div>
-      <div id="video-metadata">
+      <div id="video-metadata" class="video-meta-block">
         <h2 id="video-title">Загружается...</h2>
-        <p id="video-date"></p>
-        <p id="video-description"></p>
+        <div class="video-stats" id="video-stats"></div>
+        <div class="channel-info" id="channel-info"></div>
+        <div class="video-description" id="video-description"></div>
       </div>
+
     </div>
     <!-- Чат-секция (справа на ПК, снизу на моб.) -->
     <div id="chat-section" class="chat-section">
@@ -165,6 +207,48 @@
       if (!results[2]) return '';
       return decodeURIComponent(results[2].replace(/\+/g, ' '));
     }
+
+    async function loadInvideousInfo(videoId) {
+      const url = `https://razcraft.duckdns.org:6443/api/v1/videos/${videoId}`;
+
+      try {
+        const response = await fetch(url);
+        if (!response.ok) return null;
+
+        const data = await response.json();
+        return data;
+      } catch (e) {
+        console.warn("Invideous недоступен:", e);
+        return null;
+      }
+    }
+
+    function renderVideoMetadata(info) {
+      if (!info) return;
+
+      // Заголовок
+      document.getElementById("video-title").innerText = info.title || "Без названия";
+
+      // Статистика
+      const statsEl = document.getElementById("video-stats");
+      statsEl.innerText =
+        `${info.viewCount?.toLocaleString("ru-RU")} просмотров • ` +
+        `${new Date(info.published).toLocaleDateString("ru-RU")}`;
+
+      // Канал
+      const channelEl = document.getElementById("channel-info");
+      channelEl.innerHTML = `
+        <img src="${info.authorThumbnails?.[0]?.url || ""}" alt="">
+        <div class="channel-name">${info.author}</div>
+      `;
+
+      // Описание
+      document.getElementById("video-description").innerText =
+        info.description || "";
+    }
+
+
+
 
     // --- Глобальные переменные для чата ---
     let player;
@@ -382,6 +466,11 @@
       // Получаем данные видео через IFrame API
       const videoData = player.getVideoData();
       document.getElementById('video-title').innerText = videoData.title;
+
+      loadInvideousInfo(videoData.video_id).then(info => {
+        if (info) renderVideoMetadata(info);
+      });
+
 
       // Ищем запись чата по video id
       findChatRecordByVideoId(videoData.video_id).then(foundRecord => {
