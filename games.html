@@ -2,258 +2,113 @@
 <html lang="ru">
 <head>
   <meta charset="UTF-8">
-  <title>Pwgood Records — Игры</title>
-  <link rel="stylesheet" href="styles.css">
-
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>VodStorage — Игры</title>
+  <link rel="icon" type="image/png" href="https://goood.pw/assets/top-hat.png">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700;800&display=swap" rel="stylesheet">
   <style>
-    body {
-      overflow-x: hidden;
-    }
-
-    .games-container {
-      display: flex;
-      gap: 20px;
-      padding: 20px;
-    }
-
-    .games-grid {
-      width: 330px;
-      display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
-      gap: 14px;
-      height: 85vh;
-      overflow-y: auto;
-      padding-right: 10px;
-    }
-
-    .game-card {
-      background: #18181b;
-      border-radius: 8px;
-      border: 1px solid #222;
-      cursor: pointer;
-      transition: 0.2s;
-      padding-bottom: 8px;
-    }
-
-    .game-card:hover {
-      transform: translateY(-3px);
-      border-color: #9147ff;
-    }
-
-    .game-card img {
-      width: 100%;
-      border-radius: 8px 8px 0 0;
-      object-fit: cover;
-    }
-
-    .game-card-title {
-      padding: 6px;
-      font-size: 0.9rem;
-      color: #e0e0e0;
-      text-align: center;
-      line-height: 1.1rem;
-    }
-
-    .streams-panel {
-      flex: 1;
-      background: #0e0e10;
-      padding: 15px;
-      border-radius: 8px;
-      min-height: 85vh;
-      overflow-y: auto;
-    }
-
-    .stream-card {
-      background: #18181b;
-      padding: 10px;
-      border-radius: 8px;
-      margin-bottom: 12px;
-      border: 1px solid #222;
-      display: flex;
-      gap: 12px;
-    }
-
-    .stream-card img {
-      width: 160px;
-      height: 90px;
-      border-radius: 6px;
-      object-fit: cover;
-    }
-
-    .stream-card a {
-      color: #9147ff;
-      text-decoration: none;
-      font-weight: bold;
-      font-size: 1rem;
-    }
-
-    .stream-card a:hover {
-      text-decoration: underline;
-    }
-
-    @media (max-width: 900px) {
-      .games-container {
-        flex-direction: column;
-      }
-      .games-grid {
-        width: 100%;
-        height: auto;
-        grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
-      }
-      .stream-card {
-        flex-direction: column;
-      }
-      .stream-card img {
-        width: 100%;
-        height: auto;
-      }
-    }
+    *, *::before, *::after { box-sizing:border-box; margin:0; padding:0; }
+    :root { --bg:#000; --surface:#111; --surface2:#1a1a1a; --border:#272727; --text:#e8e8e8; --text-dim:#999; --text-muted:#555; --white:#fff; --sidebar-w:110px; --topbar-h:60px; }
+    html, body { height:100%; background:var(--bg); color:var(--text); font-family:'JetBrains Mono',monospace; font-size:14px; overflow-x:hidden; }
+    .topbar { position:fixed; top:0; left:0; right:0; height:var(--topbar-h); background:var(--surface); border-bottom:1px solid var(--border); display:flex; align-items:center; z-index:101; }
+    .logo { height:var(--topbar-h); flex-shrink:0; display:flex; align-items:center; justify-content:center; text-decoration:none; font-family:'JetBrains Mono',monospace; font-weight:800; font-size:20px; color:var(--white); white-space:nowrap; letter-spacing:-0.5px; padding:0 24px; }
+    .sidebar { position:fixed; top:var(--topbar-h); left:0; width:var(--sidebar-w); height:calc(100vh - var(--topbar-h)); background:var(--surface); border-right:1px solid var(--border); display:flex; flex-direction:column; align-items:center; padding:16px 0; z-index:100; }
+    .sidebar-nav { display:flex; flex-direction:column; align-items:center; gap:4px; width:100%; }
+    .sidebar-btn { width:90px; height:67px; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:6px; background:none; border:none; color:#aaa; cursor:pointer; border-radius:10px; transition:background 0.15s,color 0.15s; font-family:'JetBrains Mono',monospace; font-size:15px; text-transform:lowercase; text-decoration:none; text-align:center; line-height:1.3; padding:0 4px; }
+    .sidebar-btn:hover { background:var(--surface2); color:var(--white); }
+    .sidebar-btn.active { color:var(--white); background:var(--surface2); }
+    .sidebar-btn svg { width:22px; height:22px; stroke:currentColor; fill:none; stroke-width:1.6; stroke-linecap:round; stroke-linejoin:round; }
+    .page { margin-top:var(--topbar-h); margin-left:var(--sidebar-w); height:calc(100vh - var(--topbar-h)); display:flex; background:var(--bg); overflow:hidden; }
+    .games-col { width:340px; flex-shrink:0; border-right:1px solid var(--border); overflow-y:auto; padding:16px 14px; display:flex; flex-direction:column; gap:8px; min-height:0; align-self:stretch; }
+    .game-card { background:var(--surface); border:1px solid var(--border); border-radius:10px; cursor:pointer; transition:border-color 0.15s,background 0.15s; display:flex; flex-direction:row; height:130px; }
+    .game-card:hover { border-color:#555; background:var(--surface2); }
+    .game-card.selected { border-color:#777; background:var(--surface2); }
+    .game-card-cover { width:86px; flex-shrink:0; overflow:hidden; }
+    .game-card-cover img { width:100%; height:100%; object-fit:cover; display:block; }
+    .game-card-info { flex:1; padding:14px; display:flex; flex-direction:column; justify-content:space-between; min-width:0; }
+    .game-card-name { font-size:14px; font-weight:600; color:var(--text); line-height:1.4; overflow:hidden; display:-webkit-box; -webkit-line-clamp:3; -webkit-box-orient:vertical; }
+    .game-card-count { font-size:12px; color:var(--text-muted); }
+    .streams-col { flex:1; overflow-y:auto; padding:24px 28px; }
+    .streams-title { font-size:1.3rem; font-weight:700; color:var(--white); margin-bottom:20px; letter-spacing:-0.5px; }
+    .stream-card { background:var(--surface); border:1px solid var(--border); border-radius:10px; overflow:hidden; display:flex; gap:14px; padding:12px; margin-bottom:12px; cursor:pointer; transition:border-color 0.15s; text-decoration:none; }
+    .stream-card:hover { border-color:#555; }
+    .stream-card img { width:160px; height:90px; border-radius:8px; object-fit:cover; flex-shrink:0; }
+    .stream-card-title { font-size:13px; font-weight:500; color:var(--text); line-height:1.5; padding-top:4px; }
+    .placeholder { color:var(--text-muted); font-size:13px; padding:40px 0; }
+    @media (max-width:768px) { .sidebar { display:none; } .page { margin-left:0; flex-direction:column; height:auto; overflow:auto; } .games-col { width:100%; border-right:none; border-bottom:1px solid var(--border); height:240px; } .stream-card img { width:100px; height:56px; } }
   </style>
-  <!-- Yandex.Metrika counter -->
-    <script type="text/javascript" >
-        (function(m,e,t,r,i,k,a){m[i]=m[i]||function(){(m[i].a=m[i].a||[]).push(arguments)};
-            m[i].l=1*new Date();
-            for (var j = 0; j < document.scripts.length; j++) {if (document.scripts[j].src === r) { return; }}
-            k=e.createElement(t),a=e.getElementsByTagName(t)[0],k.async=1,k.src=r,a.parentNode.insertBefore(k,a)})
-        (window, document, "script", "https://mc.yandex.ru/metrika/tag.js", "ym");
-
-        ym(100982365, "init", {
-            clickmap:true,
-            trackLinks:true,
-            accurateTrackBounce:true,
-            webvisor:true
-        });
-    </script>
-    <noscript><div><img src="https://mc.yandex.ru/watch/100982365" style="position:absolute; left:-9999px;" alt="" /></div></noscript>
-    <!-- /Yandex.Metrika counter -->
+  <script type="text/javascript">(function(m,e,t,r,i,k,a){m[i]=m[i]||function(){(m[i].a=m[i].a||[]).push(arguments)};m[i].l=1*new Date();for(var j=0;j<document.scripts.length;j++){if(document.scripts[j].src===r){return;}}k=e.createElement(t),a=e.getElementsByTagName(t)[0],k.async=1,k.src=r,a.parentNode.insertBefore(k,a)})(window,document,"script","https://mc.yandex.ru/metrika/tag.js","ym");ym(100982365,"init",{clickmap:true,trackLinks:true,accurateTrackBounce:true,webvisor:true});</script>
+  <noscript><div><img src="https://mc.yandex.ru/watch/100982365" style="position:absolute;left:-9999px;" alt=""/></div></noscript>
 </head>
-
 <body>
-<header class="no-link-styles">
-  <a class="logo" href="/PwgoodChatRecords">Pwgood Records</a>
-  <nav>
-    <a href="index.html">Главная</a>
-    <a href="calendar.html">Календарь</a>
-    <a href="games.html">Игры</a>
-    <a href="search.html">Поиск</a>
-    <a href="highlights.html">Архив ярких моментов</a>
+<header class="topbar"><a class="logo" href="index.html">vodstorage</a></header>
+<aside class="sidebar">
+  <nav class="sidebar-nav">
+    <a class="sidebar-btn" href="records.html" title="Записи"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><polygon points="10 8 16 12 10 16 10 8"/></svg>записи</a>
+    <a class="sidebar-btn" href="calendar.html" title="Календарь"><svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>календарь</a>
+    <a class="sidebar-btn active" href="games.html" title="Игры"><svg viewBox="0 0 24 24"><line x1="6" y1="12" x2="10" y2="12"/><line x1="8" y1="10" x2="8" y2="14"/><circle cx="15" cy="11" r="1"/><circle cx="17" cy="13" r="1"/><path d="M3 6h18l-2 13H5L3 6z"/></svg>игры</a>
+    <a class="sidebar-btn" href="highlights.html" title="Моменты"><svg viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>моменты</a>
   </nav>
-</header>
-
-<div class="games-container">
-
-  <div class="games-grid" id="games"></div>
-
-  <div class="streams-panel">
-    <h2 id="game-title">Выберите игру</h2>
-    <div id="streams"></div>
+</aside>
+<main class="page">
+  <div class="games-col" id="games"></div>
+  <div class="streams-col">
+    <div class="streams-title" id="game-title">выберите игру</div>
+    <div id="streams"><p class="placeholder">нажмите на игру слева</p></div>
   </div>
-
-</div>
-
+</main>
 <script>
 async function loadData() {
-  const response = await fetch("by_games.json");
-  return await response.json();
+  const r = await fetch("by_games.json");
+  return r.json();
 }
-
-/* Генерация box-art, если нет box_art в JSON */
-function generateBoxArtFromName(gameName) {
-  const titleCase = gameName
-    .toLowerCase()
-    .split(" ")
-    .map(w => w.charAt(0).toUpperCase() + w.slice(1))
-    .join(" ");
-
-  const cleaned = titleCase.replace(/[^a-zA-Z0-9:\- ]/g, "");
-  const encoded = cleaned.replace(/ /g, "%20");
-
-  return `https://static-cdn.jtvnw.net/ttv-boxart/${encoded}-285x380.jpg`;
+function getBoxArt(name, tmpl) {
+  if (tmpl) return tmpl.replace("{width}","285").replace("{height}","380");
+  const c = name.toLowerCase().split(" ").map(w=>w.charAt(0).toUpperCase()+w.slice(1)).join(" ").replace(/[^a-zA-Z0-9:\- ]/g,"").replace(/ /g,"%20");
+  return "https://static-cdn.jtvnw.net/ttv-boxart/"+c+"-285x380.jpg";
 }
-
-/* box_art из JSON или генерация */
-function getBoxArt(gameName, boxArtTemplate) {
-  if (boxArtTemplate) {
-    return boxArtTemplate
-      .replace("{width}", "285")
-      .replace("{height}", "380");
-  }
-  return generateBoxArtFromName(gameName);
+function extractDate(t) {
+  const m = t.match(/^(\d{2})\.(\d{2})\.(\d{4})/);
+  return m ? new Date(m[3]+"-"+m[2]+"-"+m[1]) : new Date(0);
 }
-
-/* Превью стрима */
-function getPreview(videoId) {
-  const main = `https://razcraft.duckdns.org:6443/vi/${videoId}/hqdefault.jpg`;
-  const fallback = `https://img.youtube.com/vi/${videoId}/hqdefault.jpg`;
-  return { main, fallback };
-}
-
-/* Парсим дату из названия */
-function extractDate(title) {
-  const match = title.match(/^(\d{2})\.(\d{2})\.(\d{4})/);
-  if (!match) return new Date(0);
-  const [_, d, m, y] = match;
-  return new Date(`${y}-${m}-${d}`);
-}
-
-/* Рендер списка игр */
+let selectedCard = null;
 function renderGames(data) {
   const container = document.getElementById("games");
-
-  Object.entries(data).forEach(([gameName, gameObj]) => {
-    const videos = gameObj.videos || [];
-    const boxArt = gameObj.box_art;
-
+  Object.entries(data).forEach(([name, obj]) => {
+    const videos = obj.videos || [];
     const card = document.createElement("div");
     card.className = "game-card";
-
-    const img = document.createElement("img");
-    img.src = getBoxArt(gameName, boxArt);
-
-    const title = document.createElement("div");
-    title.className = "game-card-title";
-    title.innerHTML = `${gameName}<br><small>${videos.length} стримов</small>`;
-
-    card.appendChild(img);
-    card.appendChild(title);
-
-    card.onclick = () => renderStreams(gameName, videos);
-
+    const cover = document.createElement("div"); cover.className = "game-card-cover";
+    const img = document.createElement("img"); img.src = getBoxArt(name, obj.box_art); img.alt = name;
+    cover.appendChild(img);
+    const info = document.createElement("div"); info.className = "game-card-info";
+    info.innerHTML = '<div class="game-card-name">'+name+'</div><div class="game-card-count">'+videos.length+' стримов</div>';
+    card.appendChild(cover); card.appendChild(info);
+    card.onclick = () => {
+      if (selectedCard) selectedCard.classList.remove("selected");
+      card.classList.add("selected"); selectedCard = card;
+      renderStreams(name, videos);
+    };
     container.appendChild(card);
   });
 }
-
-/* Рендер стримов выбранной игры */
-function renderStreams(gameName, streams) {
-  document.getElementById("game-title").textContent = gameName;
-
+function renderStreams(name, streams) {
+  document.getElementById("game-title").textContent = name;
   const container = document.getElementById("streams");
   container.innerHTML = "";
-
-  streams
-    .slice()
-    .sort((a, b) => extractDate(b.title) - extractDate(a.title))
-    .forEach(stream => {
-      const card = document.createElement("div");
-      card.className = "stream-card";
-
-      const preview = getPreview(stream.id);
-
-      card.innerHTML = `
-        <img src="${preview.main}" onerror="this.onerror=null;this.src='${preview.fallback}'">
-        <div>
-          <a href="video.html?id=${stream.id}" target="_blank">${stream.title}</a>
-        </div>
-      `;
-
-      container.appendChild(card);
-    });
+  streams.slice().sort((a,b)=>extractDate(b.title)-extractDate(a.title)).forEach(s => {
+    const p = "https://razcraft.duckdns.org:6443/vi/"+s.id+"/hqdefault.jpg";
+    const fb = "https://img.youtube.com/vi/"+s.id+"/hqdefault.jpg";
+    const card = document.createElement("a");
+    card.className = "stream-card";
+    card.href = "video.html?id=" + s.id;
+    card.innerHTML = '<img src="'+p+'" onerror="this.onerror=null;this.src=\''+fb+'\'" alt=""><div class="stream-card-title">'+s.title+'</div>';
+    container.appendChild(card);
+  });
 }
-
-loadData().then(data => {
-  renderGames(data);
-});
+loadData().then(renderGames);
 </script>
-
 </body>
 </html>

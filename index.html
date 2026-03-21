@@ -1,219 +1,179 @@
 <!DOCTYPE html>
 <html lang="ru">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Pwgood Records - Главная</title>
-    <link rel="icon" type="image/png" href="https://goood.pw/assets/top-hat.png">
-    <link rel="stylesheet" href="styles.css" type="text/css">
-    <style>
-        /* Основная структура */
-        .main-container {
-            display: flex;
-            padding: 20px;
-            gap: 20px;
-        }
-        .sidebar {
-            flex: 1;
-            background-color: #0e0e10;
-            padding: 10px;
-            border-radius: 8px;
-            min-width: 200px;
-        }
-        .sidebar h3 {
-            margin-bottom: 10px;
-        }
-        .sidebar ul {
-            list-style: none;
-        }
-        .sidebar ul li {
-            margin-bottom: 8px;
-        }
-        .sidebar ul li a {
-            color: #9147ff;
-            text-decoration: none;
-            font-weight: bold;
-        }
-        .content {
-            flex: 3;
-        }
-        /* Секция трансляций */
-        .stream-list {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-            gap: 15px;
-        }
-        .stream-card {
-            background-color: #0e0e10;
-            border-radius: 8px;
-            padding: 10px;
-            text-align: center;
-        }
-        .stream-card img {
-            width: 100%;
-            border-radius: 8px;
-        }
-        .stream-card h4 {
-            margin-top: 8px;
-            font-size: 1.1rem;
-        }
-        /* Responsive стили */
-        @media (max-width: 768px) {
-            header {
-                flex-direction: column;
-                align-items: flex-start;
-            }
-            nav {
-                margin-left: 0;
-                margin-top: 10px;
-            }
-            .main-container {
-                flex-direction: column;
-                padding: 10px;
-            }
-            .content {
-                margin-left: 0;
-                margin-top: 20px;
-            }
-        }
-    </style>
-    <!-- Yandex.Metrika counter -->
-    <script type="text/javascript" >
-        (function(m,e,t,r,i,k,a){m[i]=m[i]||function(){(m[i].a=m[i].a||[]).push(arguments)};
-            m[i].l=1*new Date();
-            for (var j = 0; j < document.scripts.length; j++) {if (document.scripts[j].src === r) { return; }}
-            k=e.createElement(t),a=e.getElementsByTagName(t)[0],k.async=1,k.src=r,a.parentNode.insertBefore(k,a)})
-        (window, document, "script", "https://mc.yandex.ru/metrika/tag.js", "ym");
-
-        ym(100982365, "init", {
-            clickmap:true,
-            trackLinks:true,
-            accurateTrackBounce:true,
-            webvisor:true
-        });
-    </script>
-    <noscript><div><img src="https://mc.yandex.ru/watch/100982365" style="position:absolute; left:-9999px;" alt="" /></div></noscript>
-    <!-- /Yandex.Metrika counter -->
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>VodStorage</title>
+  <link rel="icon" type="image/png" href="https://goood.pw/assets/top-hat.png">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700;800&display=swap" rel="stylesheet">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/pako/2.1.0/pako.min.js"></script>
+  <style>
+    *, *::before, *::after { box-sizing:border-box; margin:0; padding:0; }
+    :root { --bg:#000; --surface:#111; --surface2:#1a1a1a; --border:#272727; --text:#e8e8e8; --text-dim:#999; --text-muted:#555; --white:#fff; --sidebar-w:110px; --topbar-h:60px; }
+    html, body { height:100%; background:var(--bg); color:var(--text); font-family:'JetBrains Mono',monospace; font-size:14px; overflow-x:hidden; }
+    .topbar { position:fixed; top:0; left:0; right:0; height:var(--topbar-h); background:var(--surface); border-bottom:1px solid var(--border); display:flex; align-items:center; z-index:101; }
+    .logo { height:var(--topbar-h); flex-shrink:0; display:flex; align-items:center; justify-content:center; text-decoration:none; font-family:'JetBrains Mono',monospace; font-weight:800; font-size:20px; color:var(--white); white-space:nowrap; letter-spacing:-0.5px; padding:0 24px; }
+    .sidebar { position:fixed; top:var(--topbar-h); left:0; width:var(--sidebar-w); height:calc(100vh - var(--topbar-h)); background:var(--surface); border-right:1px solid var(--border); display:flex; flex-direction:column; align-items:center; padding:16px 0; z-index:100; }
+    .sidebar-nav { display:flex; flex-direction:column; align-items:center; gap:4px; width:100%; }
+    .sidebar-btn { width:90px; height:67px; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:6px; background:none; border:none; color:#aaa; cursor:pointer; border-radius:10px; transition:background 0.15s,color 0.15s; font-family:'JetBrains Mono',monospace; font-size:15px; text-transform:lowercase; text-decoration:none; text-align:center; line-height:1.3; padding:0 4px; }
+    .sidebar-btn:hover { background:var(--surface2); color:var(--white); }
+    .sidebar-btn.active { color:var(--white); background:var(--surface2); }
+    .sidebar-btn svg { width:22px; height:22px; stroke:currentColor; fill:none; stroke-width:1.6; stroke-linecap:round; stroke-linejoin:round; }
+    .page { margin-top:var(--topbar-h); margin-left:var(--sidebar-w); min-height:calc(100vh - var(--topbar-h)); display:flex; flex-direction:column; align-items:center; justify-content:center; padding:48px 32px 80px; background:var(--bg); }
+    .hero { display:flex; flex-direction:column; align-items:center; gap:16px; margin-bottom:48px; }
+    .hero-logo { width:160px; height:160px; object-fit:contain; }
+    .hero-title { font-size:3.2rem; font-weight:800; letter-spacing:-2px; color:var(--white); line-height:1; white-space:nowrap; }
+    .hero-desc { font-size:17px; color:var(--text-dim); text-align:center; letter-spacing:0.1px; line-height:1.7; }
+    .search-wrap { width:100%; max-width:620px; display:flex; flex-direction:column; align-items:center; gap:16px; }
+    .search-field { width:100%; display:flex; background:var(--surface); border:1px solid var(--border); border-radius:12px; overflow:hidden; transition:border-color 0.2s,box-shadow 0.2s; }
+    .search-field:focus-within { border-color:#555; box-shadow:0 0 0 3px rgba(150,150,150,0.08); }
+    .search-icon { display:flex; align-items:center; padding:0 18px; color:var(--text-muted); }
+    .search-icon svg { width:17px; height:17px; stroke:currentColor; fill:none; stroke-width:1.8; stroke-linecap:round; stroke-linejoin:round; }
+    .search-field input { flex:1; background:none; border:none; outline:none; padding:16px 4px; font-family:'JetBrains Mono',monospace; font-size:14px; color:var(--text); }
+    .search-field input::placeholder { color:var(--text-muted); }
+    .search-submit { background:var(--surface2); border:none; border-left:1px solid var(--border); color:var(--text-dim); padding:0 24px; font-family:'JetBrains Mono',monospace; font-size:13px; font-weight:700; cursor:pointer; letter-spacing:0.3px; transition:background 0.15s,color 0.15s; }
+    .search-submit:hover { background:#222; color:var(--white); }
+    .search-modes { display:flex; gap:10px; }
+    .mode-btn { display:flex; align-items:center; gap:8px; padding:12px 22px; border-radius:8px; border:1px solid var(--border); background:none; color:var(--text-dim); font-family:'JetBrains Mono',monospace; font-size:15px; cursor:pointer; transition:all 0.15s; }
+    .mode-btn svg { width:16px; height:16px; stroke:currentColor; fill:none; stroke-width:1.8; stroke-linecap:round; stroke-linejoin:round; flex-shrink:0; }
+    .mode-btn:hover { border-color:#555; color:var(--white); background:var(--surface2); }
+    .mode-btn.active { border-color:#666; background:var(--surface2); color:var(--white); }
+    .warning { width:100%; text-align:center; background:rgba(180,40,40,0.1); color:#d06060; padding:16px 24px; border-radius:8px; border:1px solid rgba(180,40,40,0.25); font-size:15px; display:none; line-height:1.7; }
+    .progress-wrap { width:100%; height:2px; background:var(--surface2); border-radius:2px; overflow:hidden; display:none; }
+    .progress-fill { height:100%; width:0%; background:#666; transition:width 0.3s ease; }
+    .results-area { width:100%; max-width:1040px; margin-top:40px; }
+    .results-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(280px,1fr)); gap:16px; }
+    .result-card { background:var(--surface); border:1px solid var(--border); border-radius:12px; overflow:hidden; cursor:pointer; transition:border-color 0.15s,transform 0.15s; text-decoration:none; display:block; }
+    .result-card:hover { border-color:#555; transform:translateY(-2px); }
+    .result-card img { width:100%; aspect-ratio:16/9; object-fit:cover; display:block; }
+    .result-card h4 { padding:12px 14px; font-size:13px; font-weight:500; color:var(--text); line-height:1.5; }
+    .no-results { color:var(--text-muted); font-size:13px; text-align:center; padding:60px 0; }
+    @media (max-width:600px) { .sidebar { display:none; } .page { margin-left:0; } .hero-title { font-size:2.2rem; white-space:normal; } }
+  </style>
+  <script type="text/javascript">(function(m,e,t,r,i,k,a){m[i]=m[i]||function(){(m[i].a=m[i].a||[]).push(arguments)};m[i].l=1*new Date();for(var j=0;j<document.scripts.length;j++){if(document.scripts[j].src===r){return;}}k=e.createElement(t),a=e.getElementsByTagName(t)[0],k.async=1,k.src=r,a.parentNode.insertBefore(k,a)})(window,document,"script","https://mc.yandex.ru/metrika/tag.js","ym");ym(100982365,"init",{clickmap:true,trackLinks:true,accurateTrackBounce:true,webvisor:true});</script>
+  <noscript><div><img src="https://mc.yandex.ru/watch/100982365" style="position:absolute;left:-9999px;" alt=""/></div></noscript>
 </head>
 <body>
-<header class="no-link-styles">
-    <a class="logo" href="/PwgoodChatRecords">Pwgood Records</a>
-    <nav>
-        <a href="index.html">Главная</a>
-        <a href="calendar.html">Календарь</a>
-        <a href="games.html">Игры</a>
-        <a href="search.html">Поиск</a>
-        <a href="highlights.html">Архив ярких моментов</a>
-    </nav>
-</header>
-
-<div class="main-container">
-    <main class="content">
-        <h2>Последние трансляции</h2>
-        <div class="stream-list">
-        </div>
-    </main>
-</div>
+<header class="topbar"><a class="logo" href="index.html">vodstorage</a></header>
+<aside class="sidebar">
+  <nav class="sidebar-nav">
+    <a class="sidebar-btn" href="records.html" title="Записи"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><polygon points="10 8 16 12 10 16 10 8"/></svg>записи</a>
+    <a class="sidebar-btn" href="calendar.html" title="Календарь"><svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>календарь</a>
+    <a class="sidebar-btn" href="games.html" title="Игры"><svg viewBox="0 0 24 24"><line x1="6" y1="12" x2="10" y2="12"/><line x1="8" y1="10" x2="8" y2="14"/><circle cx="15" cy="11" r="1"/><circle cx="17" cy="13" r="1"/><path d="M3 6h18l-2 13H5L3 6z"/></svg>игры</a>
+    <a class="sidebar-btn" href="highlights.html" title="Моменты"><svg viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>моменты</a>
+  </nav>
+</aside>
+<main class="page">
+  <div class="hero">
+    <img class="hero-logo" src="icons/logo.png" alt="vodstorage">
+    <h1 class="hero-title">vodstorage</h1>
+    <p class="hero-desc">хранилище записей стримов и архив ярких моментов пугода</p>
+  </div>
+  <div class="search-wrap">
+    <div class="search-field">
+      <span class="search-icon"><svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg></span>
+      <input type="text" id="search-query" placeholder="введите запрос...">
+      <button class="search-submit" id="search-button">искать</button>
+    </div>
+    <div class="search-modes">
+      <button class="mode-btn active" id="btn-title">
+        <svg viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
+        поиск по названию
+      </button>
+      <button class="mode-btn" id="btn-chat">
+        <svg viewBox="0 0 24 24"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+        поиск по чату
+      </button>
+    </div>
+    <div class="warning" id="chat-warning"><strong>внимание!</strong> поиск в чате может занять очень много времени.</div>
+    <div class="progress-wrap" id="progress-container"><div class="progress-fill" id="progress-bar"></div></div>
+  </div>
+  <div class="results-area"><div class="results-grid" id="results"></div></div>
+</main>
 <script>
-    async function loadLivestreams() {
-        let currentYear = 2022;
-        let allStreamData = [];
+const BASE = ".";
+const btnTitle = document.getElementById("btn-title");
+const btnChat = document.getElementById("btn-chat");
+const chatWarning = document.getElementById("chat-warning");
+let currentMode = "title";
+btnTitle.addEventListener("click", () => { currentMode="title"; btnTitle.classList.add("active"); btnChat.classList.remove("active"); chatWarning.style.display="none"; });
+btnChat.addEventListener("click", () => { currentMode="chat"; btnChat.classList.add("active"); btnTitle.classList.remove("active"); chatWarning.style.display="block"; });
 
-        // Пробуем загрузить файлы начиная с 2022 года, пока не встретим ошибку (например, 404)
-        while (true) {
-            const url = `${currentYear}/livestreams.json`;
-            try {
-                const response = await fetch(url);
-                if (!response.ok) {
-                    console.log(`Файл ${url} не найден. Остановка загрузки.`);
-                    break;
-                }
-                // JSON-файл представляет собой массив объектов
-                const streams = await response.json();
-                if (Array.isArray(streams)) {
-                    allStreamData = allStreamData.concat(streams);
-                }
-            } catch (error) {
-                console.error(`Ошибка при загрузке ${url}:`, error);
-                break;
-            }
-            currentYear++;
-        }
+const searchButton = document.getElementById("search-button");
+const searchQueryEl = document.getElementById("search-query");
+const resultsContainer = document.getElementById("results");
+const progressContainer = document.getElementById("progress-container");
+const progressBar = document.getElementById("progress-bar");
 
-        // Функция для парсинга даты из названия видео (ожидается формат "ДД.ММ.ГГГГ")
-        function parseDateFromName(name) {
-            const m = name.match(/(\d{1,2})\.(\d{1,2})\.(\d{4})/);
-            if (m) {
-                const day = parseInt(m[1]);
-                const month = parseInt(m[2]) - 1; // месяцы в JavaScript начинаются с 0
-                const year = parseInt(m[3]);
-                return new Date(year, month, day);
-            }
-            return new Date(0); // Если дата не распознана, возвращаем "очень старую" дату
-        }
+function displayResults(results) {
+  resultsContainer.innerHTML = "";
+  if (!results.length) { resultsContainer.innerHTML = '<p class="no-results">ничего не найдено</p>'; return; }
+  results.forEach(item => {
+    const card = document.createElement("a");
+    card.className = "result-card";
+    card.href = "video.html?id=" + item.id;
+    const p = "https://razcraft.duckdns.org:6443/vi/"+item.id+"/hqdefault.jpg";
+    const fb = "https://img.youtube.com/vi/"+item.id+"/hqdefault.jpg";
+    card.innerHTML = '<img src="'+p+'" alt="'+(item.name||'')+'" onerror="this.onerror=null;this.src=\''+fb+'\'"><h4>'+(item.name||'без названия')+'</h4>';
+    resultsContainer.appendChild(card);
+  });
+}
 
-        // Сортируем записи от новых к старым
-        allStreamData.sort((a, b) => {
-            const dateA = parseDateFromName(a.name);
-            const dateB = parseDateFromName(b.name);
-            return dateB - dateA; // чем больше дата (новее), тем раньше в списке
-        });
+async function loadAllVideos() {
+  let all = [], year = 2022;
+  while (true) {
+    try {
+      const r = await fetch(year + "/livestreams.json");
+      if (!r.ok) break;
+      const d = await r.json();
+      if (Array.isArray(d)) all = all.concat(d);
+    } catch(e) { break; }
+    year++;
+  }
+  return all;
+}
 
-        // Организация пагинации: показываем батчами по 10 видео
-        let displayedCount = 0;
-        const batchSize = 10;
-        const streamListEl = document.querySelector('.stream-list');
+async function searchByTitle(query) {
+  const all = await loadAllVideos();
+  displayResults(all.filter(v => v.name.toLowerCase().includes(query.toLowerCase())));
+}
 
-        function renderNextBatch() {
-          if (!streamListEl) return;
+async function searchInChat(query) {
+  if (!confirm("поиск в чате может занять очень много времени. продолжить?")) return;
+  const all = await loadAllVideos();
+  const found = [];
+  resultsContainer.innerHTML = '<p class="no-results">идёт поиск в чатах, пожалуйста подождите...</p>';
+  progressContainer.style.display = "block";
+  progressBar.style.width = "0%";
+  let done = 0;
+  for (const video of all) {
+    try {
+      const chatUrl = video.chat_path.startsWith("http") ? video.chat_path : video.chat_path;
+      const r = await fetch(chatUrl);
+      if (!r.ok) { done++; progressBar.style.width = (done/all.length*100)+"%"; continue; }
+      let text;
+      if (video.chat_path.endsWith(".gz")) {
+        const buf = await r.arrayBuffer();
+        text = pako.ungzip(new Uint8Array(buf), {to:"string"});
+      } else { text = await r.text(); }
+      if (text.toLowerCase().includes(query.toLowerCase())) found.push(video);
+    } catch(e) {}
+    done++;
+    progressBar.style.width = (done/all.length*100)+"%";
+  }
+  setTimeout(() => { progressContainer.style.display = "none"; }, 500);
+  displayResults(found);
+}
 
-          const end = Math.min(displayedCount + batchSize, allStreamData.length);
-          for (let i = displayedCount; i < end; i++) {
-            const stream = allStreamData[i];
-            const card = document.createElement('div');
-            card.classList.add('stream-card');
-
-            // Формируем YouTube-превью
-            const previewUrl = `https://razcraft.duckdns.org:6443/vi/${stream.id}/hqdefault.jpg`;
-            const ytFallback = `https://img.youtube.com/vi/${stream.id}/hqdefault.jpg`;
-
-            card.innerHTML = `
-              <a href="/PwgoodChatRecords/video.html?id=${stream.id}" target="_blank">
-                  <img src="${previewUrl}"
-                  alt="${stream.name || 'Без названия'}"
-                  onerror="this.onerror=null; this.src='${ytFallback}';">
-              </a>
-              <a href="/PwgoodChatRecords/video.html?id=${stream.id}" target="_blank" class="no-link-styles">
-                  <h4>${stream.name || 'Без названия'}</h4>
-              </a>
-            `;
-            streamListEl.appendChild(card);
-          }
-          displayedCount = end;
-
-          // Если высота страницы меньше высоты окна (с небольшим запасом) и ещё есть данные, загружаем следующую партию
-          if (document.body.offsetHeight < window.innerHeight + 100 && displayedCount < allStreamData.length) {
-            renderNextBatch();
-          }
-        }
-
-
-
-        // Отображаем первые 10 видео
-        renderNextBatch();
-
-        // Подгрузка следующей порции видео при прокрутке страницы (инфинити-скролл)
-        window.addEventListener('scroll', () => {
-            // Если пользователь приблизился к нижней границе страницы, подгружаем новые видео
-            if ((window.innerHeight + window.scrollY) >= document.body.offsetHeight - 100) {
-                renderNextBatch();
-            }
-        });
-    }
-
-    document.addEventListener('DOMContentLoaded', loadLivestreams);
+searchButton.addEventListener("click", async () => {
+  const q = searchQueryEl.value.trim();
+  if (!q) { resultsContainer.innerHTML = '<p class="no-results">введите поисковый запрос</p>'; return; }
+  if (currentMode === "title") await searchByTitle(q);
+  else await searchInChat(q);
+});
+searchQueryEl.addEventListener("keydown", e => { if (e.key === "Enter") searchButton.click(); });
 </script>
-
-
 </body>
 </html>

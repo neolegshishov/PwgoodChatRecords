@@ -3,113 +3,30 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>404 - Страница не найдена</title>
+  <title>404 — VodStorage</title>
   <link rel="icon" type="image/png" href="https://goood.pw/assets/top-hat.png">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700;800&display=swap" rel="stylesheet">
   <style>
-    /* Общий сброс и базовые стили */
-    html, body {
-      margin: 0;
-      padding: 0;
-      height: 100%;
-      font-family: Arial, sans-serif;
-      background-color: #18181b;
-      color: #ffffff;
-      overflow: hidden;
-    }
-    /* Контейнер по центру экрана */
-    .container {
-      display: flex;
-      flex-direction: column;
-      justify-content: center;
-      align-items: center;
-      height: 100%;
-      text-align: center;
-      padding: 20px;
-    }
-    /* Стиль для надписи 404 с пульсацией */
-    h1 {
-      font-size: 6rem;
-      margin: 0;
-      color: #9147ff;
-      animation: pulse 1.5s ease-in-out infinite;
-    }
-    @keyframes pulse {
-      0% { transform: scale(1); }
-      50% { transform: scale(1.1); }
-      100% { transform: scale(1); }
-    }
-    /* Поясняющий текст */
-    p {
-      font-size: 1.5rem;
-      margin: 20px 0;
-    }
-    /* Кнопка для возврата на главную */
-    a {
-      text-decoration: none;
-      color: #ffffff;
-      background-color: #9147ff;
-      padding: 10px 20px;
-      border-radius: 4px;
-      transition: background-color 0.3s;
-      font-size: 1rem;
-    }
-    a:hover {
-      background-color: #7c34d8;
-    }
-    /* Анимированный элемент */
-    .animation {
-      position: relative;
-      width: 150px;
-      height: 150px;
-      border: 5px solid #9147ff;
-      border-radius: 50%;
-      animation: rotate 4s linear infinite;
-      margin-bottom: 40px;
-    }
-    @keyframes rotate {
-      0% { transform: rotate(0deg); }
-      100% { transform: rotate(360deg); }
-    }
-    .animation::after {
-      content: "";
-      position: absolute;
-      top: 50%;
-      left: 50%;
-      width: 70px;
-      height: 70px;
-      background-color: #9147ff;
-      border-radius: 50%;
-      transform: translate(-50%, -50%);
-      animation: bounce 2s ease-in-out infinite;
-    }
-    @keyframes bounce {
-      0%, 100% { transform: translate(-50%, -50%) scale(1); }
-      50% { transform: translate(-50%, -50%) scale(1.2); }
-    }
+    *, *::before, *::after { box-sizing:border-box; margin:0; padding:0; }
+    html, body { height:100%; background:#000; color:#e8e8e8; font-family:'JetBrains Mono',monospace; overflow:hidden; }
+    .container { display:flex; flex-direction:column; align-items:center; justify-content:center; height:100%; text-align:center; gap:20px; padding:24px; }
+    .code { font-size:7rem; font-weight:800; color:#fff; letter-spacing:-4px; line-height:1; animation:pulse 2s ease-in-out infinite; }
+    @keyframes pulse { 0%,100% { opacity:1; } 50% { opacity:0.5; } }
+    .msg { font-size:15px; color:#666; line-height:1.7; }
+    .back { display:inline-flex; align-items:center; gap:8px; margin-top:8px; padding:10px 22px; background:#1a1a1a; border:1px solid #333; border-radius:8px; color:#aaa; text-decoration:none; font-family:'JetBrains Mono',monospace; font-size:13px; transition:border-color 0.15s,color 0.15s; }
+    .back:hover { border-color:#666; color:#fff; }
+    .back svg { width:15px; height:15px; stroke:currentColor; fill:none; stroke-width:2; stroke-linecap:round; stroke-linejoin:round; }
   </style>
-    <!-- Yandex.Metrika counter -->
-  <script type="text/javascript">
-    (function(m,e,t,r,i,k,a){m[i]=m[i]||function(){(m[i].a=m[i].a||[]).push(arguments)};
-    m[i].l=1*new Date();
-    for(var j=0;j<document.scripts.length;j++){
-      if(document.scripts[j].src===r){return;}
-    }
-    k=e.createElement(t),a=e.getElementsByTagName(t)[0],
-    k.async=1,k.src=r,a.parentNode.insertBefore(k,a)})
-    (window, document, "script", "https://mc.yandex.ru/metrika/tag.js", "ym");
-    ym(100982365, "init", { clickmap:true, trackLinks:true, accurateTrackBounce:true, webvisor:true });
-  </script>
-  <noscript>
-    <div><img src="https://mc.yandex.ru/watch/100982365" style="position:absolute; left:-9999px;" alt="" /></div>
-  </noscript>
-  <!-- /Yandex.Metrika counter -->
+  <script type="text/javascript">(function(m,e,t,r,i,k,a){m[i]=m[i]||function(){(m[i].a=m[i].a||[]).push(arguments)};m[i].l=1*new Date();for(var j=0;j<document.scripts.length;j++){if(document.scripts[j].src===r){return;}}k=e.createElement(t),a=e.getElementsByTagName(t)[0],k.async=1,k.src=r,a.parentNode.insertBefore(k,a)})(window,document,"script","https://mc.yandex.ru/metrika/tag.js","ym");ym(100982365,"init",{clickmap:true,trackLinks:true,accurateTrackBounce:true,webvisor:true});</script>
+  <noscript><div><img src="https://mc.yandex.ru/watch/100982365" style="position:absolute;left:-9999px;" alt=""/></div></noscript>
 </head>
 <body>
   <div class="container">
-    <div class="animation"></div>
-    <h1>404</h1>
-    <p>Ой! Кажется, страница не найдена.</p>
-    <p>Попробуйте вернуться на <a href="index.html">главную</a> страницу.</p>
+    <div class="code">404</div>
+    <p class="msg">страница не найдена</p>
+    <a class="back" href="index.html"><svg viewBox="0 0 24 24"><polyline points="15 18 9 12 15 6"/></svg>вернуться на главную</a>
   </div>
 </body>
 </html>
