@@ -99,12 +99,11 @@ function renderStreams(name, streams) {
   const container = document.getElementById("streams");
   container.innerHTML = "";
   streams.slice().sort((a,b)=>extractDate(b.title)-extractDate(a.title)).forEach(s => {
-    const p = "https://razcraft.duckdns.org:6443/vi/"+s.id+"/hqdefault.jpg";
-    const fb = "https://img.youtube.com/vi/"+s.id+"/hqdefault.jpg";
+    const p = "https://img.youtube.com/vi/"+s.id+"/hqdefault.jpg";
     const card = document.createElement("a");
     card.className = "stream-card";
     card.href = "video.html?id=" + s.id;
-    card.innerHTML = '<img src="'+p+'" onerror="this.onerror=null;this.src=\''+fb+'\'" alt=""><div class="stream-card-title">'+s.title+'</div>';
+    card.innerHTML = '<img src="'+p+'" alt=""><div class="stream-card-title">'+s.title+'</div>';
     container.appendChild(card);
   });
 }

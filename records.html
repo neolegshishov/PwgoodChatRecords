@@ -72,9 +72,8 @@ async function loadLivestreams() {
       const card = document.createElement("a");
       card.className = "stream-card";
       card.href = "video.html?id=" + s.id;
-      const p = "https://razcraft.duckdns.org:6443/vi/" + s.id + "/hqdefault.jpg";
-      const fb = "https://img.youtube.com/vi/" + s.id + "/hqdefault.jpg";
-      card.innerHTML = '<img src="'+p+'" alt="'+(s.name||'')+'" onerror="this.onerror=null;this.src=\''+fb+'\'"><h4>'+(s.name||'без названия')+'</h4>';
+      const p = "https://img.youtube.com/vi/" + s.id + "/hqdefault.jpg";
+      card.innerHTML = '<img src="'+p+'" alt="'+(s.name||'')+'"><h4>'+(s.name||'без названия')+'</h4>';
       grid.appendChild(card);
     }
     shown = end;

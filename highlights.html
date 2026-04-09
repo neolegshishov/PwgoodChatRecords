@@ -66,9 +66,8 @@ function renderBatch() {
     const card = document.createElement("a");
     card.className = "stream-card";
     card.href = "video.html?id=" + h.id;
-    const p = "https://razcraft.duckdns.org:6443/vi/" + h.id + "/hqdefault.jpg";
-    const fb = "https://img.youtube.com/vi/" + h.id + "/hqdefault.jpg";
-    card.innerHTML = '<img src="'+p+'" alt="'+(h.name||'')+'" onerror="this.onerror=null;this.src=\''+fb+'\'"><h4>'+(h.name||'без названия')+'</h4>';
+    const p = "https://img.youtube.com/vi/" + h.id + "/hqdefault.jpg";
+    card.innerHTML = '<img src="'+p+'" alt="'+(h.name||'')+'"><h4>'+(h.name||'без названия')+'</h4>';
     grid.appendChild(card);
   }
   shown = end;
