@@ -80,8 +80,7 @@ function getParam(name) {
 }
 
 async function loadInvidiousInfo(id) {
-  try { const r = await fetch("https://razcraft.duckdns.org:6443/api/v1/videos/"+id); return r.ok ? r.json() : null; }
-  catch(e) { return null; }
+  return null;
 }
 
 function renderMeta(info) {

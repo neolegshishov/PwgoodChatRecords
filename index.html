@@ -114,9 +114,8 @@ function displayResults(results) {
     const card = document.createElement("a");
     card.className = "result-card";
     card.href = "video.html?id=" + item.id;
-    const p = "https://razcraft.duckdns.org:6443/vi/"+item.id+"/hqdefault.jpg";
-    const fb = "https://img.youtube.com/vi/"+item.id+"/hqdefault.jpg";
-    card.innerHTML = '<img src="'+p+'" alt="'+(item.name||'')+'" onerror="this.onerror=null;this.src=\''+fb+'\'"><h4>'+(item.name||'без названия')+'</h4>';
+    const p = "https://img.youtube.com/vi/"+item.id+"/hqdefault.jpg";
+    card.innerHTML = '<img src="'+p+'" alt="'+(item.name||'')+'"><h4>'+(item.name||'без названия')+'</h4>';
     resultsContainer.appendChild(card);
   });
 }
